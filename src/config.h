@@ -1,7 +1,9 @@
 /* See LICENSE file for copyright and license details. */
 
-#if defined(DWM_WIN32_H__) && !defined(DWM_CONFIG_H__)
+#if !defined(DWM_CONFIG_H__)
 #define DWM_CONFIG_H__
+
+#include "dwm-win32.h"
 
 static const wchar_t *fontname = L"Fira Code";
 static const unsigned int fontsize = 20;
@@ -59,12 +61,7 @@ static Rule rules[] = {
 };
 
 /* layout(s) */
-static float mfact = 0.55; /* factor of master area size [0.05..0.95] */
-
-#include "bstack.c"
-#include "fibonacci.c"
-#include "gaplessgrid.c"
-#include "grid.c"
+float mfact = 0.55; /* factor of master area size [0.05..0.95] */
 
 static Layout layouts[] = {
     /* symbol     arrange function */

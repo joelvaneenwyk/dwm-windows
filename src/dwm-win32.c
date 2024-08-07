@@ -1,65 +1,14 @@
 #include "dwm-win32.h"
 
-DC dc;
+#include "config.h"
 
-/* function declarations */
-static void applyrules(Client *c);
-static void arrange(void);
-static void attach(Client *c);
-static void attachstack(Client *c);
-static void cleanup(lua_State *L);
-static void clearurgent(Client *c);
-static void detach(Client *c);
-static void detachstack(Client *c);
-static void drawbar(void);
-static void drawsquare(bool filled, bool empty, bool invert, unsigned long col[ColLast]);
-static void drawtext(const wchar_t *text, unsigned long col[ColLast], bool invert);
-void drawborder(Client *c, COLORREF color);
-void eprint(bool premortem, const wchar_t *errstr, ...);
-static void focus(Client *c);
-static void focusstack(const Arg *arg);
-static void movestack(const Arg *arg);
-static void forcearrange(const Arg *arg);
-static Client *getclient(HWND hwnd);
-LPWSTR getclientclassname(HWND hwnd);
-LPWSTR getclienttitle(HWND hwnd);
-LPWSTR getclientprocessname(HWND hwnd);
-HWND getroot(HWND hwnd);
-static void grabkeys(HWND hwnd);
-static void killclient(const Arg *arg);
-static Client *manage(HWND hwnd);
-static void monocle(void);
-// static Client *nextchild(Client *p, Client *c);
-// static Client *nexttiled(Client *c);
-static void quit(const Arg *arg);
-// static void resize(Client *c, int x, int y, int w, int h);
-static void restack(void);
-static BOOL CALLBACK scan(HWND hwnd, LPARAM lParam);
-static void setborder(Client *c, bool border);
-static void setvisibility(HWND hwnd, bool visibility);
-static void setlayout(const Arg *arg);
-static void setmfact(const Arg *arg);
-static void setup(lua_State *L, HINSTANCE hInstance);
-static void setupbar(HINSTANCE hInstance);
-static void showclientinfo(const Arg *arg);
-static void showhide(Client *c);
-static void spawn(const Arg *arg);
-static void tag(const Arg *arg);
-static int textnw(const wchar_t *text, unsigned int len);
-static void tile(void);
-static void togglebar(const Arg *arg);
-static void toggleborder(const Arg *arg);
-static void toggleexplorer(const Arg *arg);
-static void togglefloating(const Arg *arg);
-static void toggletag(const Arg *arg);
-static void toggleview(const Arg *arg);
-static void writelog(const Arg *arg);
-static void unmanage(Client *c);
-static void updatebar(void);
-static void updategeom(void);
-static void view(const Arg *arg);
-static void zoom(const Arg *arg);
-static bool iscloaked(HWND hwnd);
+#include "mods/client.h"
+#include "mods/display.h"
+#include "mods/dwm.h"
+#include "mods/eventemitter.h"
+#include "mods/hotkey.h"
+
+DC dc;
 
 typedef BOOL (*RegisterShellHookWindowProc) (HWND);
 

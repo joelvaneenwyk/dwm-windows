@@ -45,15 +45,6 @@
 #include <windows.h>
 #include <winuser.h>
 
-/* configuration, allows nested code to access above variables */
-#include "config.h"
-
-#include "mods/client.h"
-#include "mods/display.h"
-#include "mods/dwm.h"
-#include "mods/eventemitter.h"
-#include "mods/hotkey.h"
-
 #define NAME L"dwm-win32" /* Used for window name/class */
 
 #define ISVISIBLE(x) ((x)->tags & tagset[seltags])
@@ -155,12 +146,80 @@ typedef struct {
   bool ignoreborder;
 } Rule;
 
-Client *nextchild(Client *p, Client *c);
-Client *nexttiled(Client *c);
-void resize(Client *c, int x, int y, int w, int h);
+/* function declarations */
+extern void applyrules(Client* c);
+extern void arrange(void);
+extern void attach(Client* c);
+extern void attachstack(Client* c);
+extern void cleanup(lua_State* L);
+extern void clearurgent(Client* c);
+extern void detach(Client* c);
+extern void detachstack(Client* c);
+extern void drawbar(void);
+extern void drawsquare(bool filled, bool empty, bool invert, unsigned long col[ColLast]);
+extern void drawtext(const wchar_t* text, unsigned long col[ColLast], bool invert);
+extern void drawborder(Client* c, COLORREF color);
+extern void eprint(bool premortem, const wchar_t* errstr, ...);
+extern void focus(Client* c);
+extern void focusstack(const Arg* arg);
+static void movestack(const Arg* arg);
+static void forcearrange(const Arg* arg);
+static Client* getclient(HWND hwnd);
+extern LPWSTR getclientclassname(HWND hwnd);
+extern LPWSTR getclienttitle(HWND hwnd);
+extern LPWSTR getclientprocessname(HWND hwnd);
+extern HWND getroot(HWND hwnd);
+extern void grabkeys(HWND hwnd);
+extern void killclient(const Arg* arg);
+extern Client* manage(HWND hwnd);
+extern void monocle(void);
+extern Client *nextchild(Client *p, Client *c);
+extern Client *nexttiled(Client *c);
+extern void quit(const Arg* arg);
+extern void resize(Client *c, int x, int y, int w, int h);
+extern void restack(void);
+extern BOOL CALLBACK scan(HWND hwnd, LPARAM lParam);
+extern void setborder(Client* c, bool border);
+extern void setvisibility(HWND hwnd, bool visibility);
+extern void setlayout(const Arg* arg);
+extern void setmfact(const Arg* arg);
+extern void setup(lua_State* L, HINSTANCE hInstance);
+extern void setupbar(HINSTANCE hInstance);
+extern void showclientinfo(const Arg* arg);
+extern void showhide(Client* c);
+extern void spawn(const Arg* arg);
+extern void tag(const Arg* arg);
+extern int textnw(const wchar_t* text, unsigned int len);
+extern void tile(void);
+extern void togglebar(const Arg* arg);
+extern void toggleborder(const Arg* arg);
+extern void toggleexplorer(const Arg* arg);
+extern void togglefloating(const Arg* arg);
+extern void toggletag(const Arg* arg);
+extern void toggleview(const Arg* arg);
+extern void writelog(const Arg* arg);
+extern void unmanage(Client* c);
+extern void updatebar(void);
+extern void updategeom(void);
+extern void view(const Arg* arg);
+extern void zoom(const Arg* arg);
+extern bool iscloaked(HWND hwnd);
 
-extern Client *clients;
+/* overrides */
+void
+bstack(void);
+void
+gaplessgrid(void);
+void
+grid(void);
+void
+fibonacci(void);
+void
+spiral(void);
+void
+dwindle(void);
 
+extern Client* clients;
 /* bar geometry x, y, height and layout symbol width */
 static int bx, by, bh, blw;
 /* window area geometry x, y, width, height, bar excluded */

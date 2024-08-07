@@ -1,3 +1,5 @@
+#include "dwm-win32.h"
+
 #include "mods/client.h"
 
 #include <stdint.h>
@@ -10,7 +12,7 @@
 #include <windows.h>
 #include <dwmapi.h>
 
-#include "../win32_utf8.h"
+#include "win32_utf8.h"
 
 typedef struct EnumWindowsState {
 	lua_State *L;
@@ -18,10 +20,6 @@ typedef struct EnumWindowsState {
 } EnumWindowsState;
 
 BOOL CALLBACK EnumWindowsCallback(HWND hwnd, LPARAM lParam);
-
-static char *getclienttitle(HWND hwnd);
-static char *getclientclassname(HWND hwnd);
-static BOOL iscloaked(HWND hwnd);
 
 static int f_clients(lua_State *L);
 static int f_client(lua_State *L);
@@ -33,6 +31,9 @@ static int f_focus(lua_State *L);
 static int f_maximize(lua_State *L);
 static int f_minimize(lua_State *L);
 static int f_position(lua_State *L);
+
+static char* getclienttitle_utf8(HWND hwnd);
+static  char* getclientclassname_utf8(HWND hwnd);
 
 int
 luaopen_dwm_client(lua_State *L) {
@@ -98,18 +99,18 @@ static int f_client(lua_State *L) {
 	lua_pushboolean(L, IsWindowVisible(hwnd) ? 1 : 0);
 	lua_settable(L, -3);
 
-	char *clienttitle = getclienttitle(hwnd);
+	char *clienttitle = getclienttitle_utf8(hwnd);
 	if (clienttitle) {
 		lua_pushstring(L, "title");
-		lua_pushstring(L, getclienttitle(hwnd));
+		lua_pushstring(L, getclienttitle_utf8(hwnd));
 		lua_settable(L, -3);
 		free(clienttitle);
 	}
 
-	char *classname = getclientclassname(hwnd);
+	char *classname = getclientclassname_utf8(hwnd);
 	if (classname) {
 		lua_pushstring(L, "classname");
-		lua_pushstring(L, getclientclassname(hwnd));
+		lua_pushstring(L, getclientclassname_utf8(hwnd));
 		lua_settable(L, -3);
 		free(classname);
 	}
@@ -276,26 +277,15 @@ f_position(lua_State *L) {
 }
 
 char
-*getclienttitle(HWND hwnd) {
+*getclienttitle_utf8(HWND hwnd) {
     static wchar_t buf[500];
     GetWindowTextW(hwnd, buf, sizeof buf);
 	return (char*)utf16_to_utf8(buf);
 }
 
 char
-*getclientclassname(HWND hwnd) {
+*getclientclassname_utf8(HWND hwnd) {
     static wchar_t buf[500];
     GetClassNameW(hwnd, buf, sizeof buf);
 	return (char*)utf16_to_utf8(buf);
-}
-
-BOOL
-iscloaked(HWND hwnd) {
-    int cloaked_val;
-    HRESULT h_res = DwmGetWindowAttribute(hwnd, DWMWA_CLOAKED, &cloaked_val, sizeof(cloaked_val));
-
-    if (h_res != S_OK)
-        cloaked_val = 0;
-
-    return cloaked_val ? TRUE : FALSE;
 }
