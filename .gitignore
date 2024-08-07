@@ -1,8 +1,6 @@
 *.exe
 *.pdb
 
-config.h
-
 tags
 *.swp
 *.orig
@@ -12,3 +10,5 @@ compile_commands.json
 
 dwm-win32.log
 zig-cache/
+
+extern/sdl2/android-project/.gradle/
