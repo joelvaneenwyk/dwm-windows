@@ -1,3 +1,5 @@
+#include "dwm-win32.h"
+
 void
 bstack(void) {
        int x, y, h, w, mh;

@@ -1,3 +1,5 @@
+#include "dwm-win32.h"
+
 #include "mods/dwm.h"
 
 #include <lauxlib.h>

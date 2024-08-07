@@ -1,5 +1,7 @@
-#include "dwm.h"
-#include "hotkey.h"
+#include "dwm-win32.h"
+
+#include "mods/dwm.h"
+#include "mods/hotkey.h"
 
 #include <lauxlib.h>
 #include <lua.h>

@@ -1,3 +1,7 @@
+#pragma once
+
+#include "dwm-win32.h"
+
 void *utf8_to_utf16(const char *s);
 void *utf16_to_utf8(const WCHAR *ws);
 void *mbcs_to_utf16(const char *mbcs);

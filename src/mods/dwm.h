@@ -1,11 +1,7 @@
 #ifndef DWM_MOD_DWM
 #define DWM_MOD_DWM
 
-#include <lauxlib.h>
-#include <lua.h>
-#include <lualib.h>
-
-#include <windows.h>
+#include "dwm-win32.h"
 
 typedef struct {
     HINSTANCE hInstance;

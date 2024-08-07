@@ -1,4 +1,5 @@
 #include "dwm-win32.h"
+
 void
 fibonacci(int s) {
 	unsigned int i, n, nx, ny, nw, nh;

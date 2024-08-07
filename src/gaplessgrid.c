@@ -1,4 +1,5 @@
 #include "dwm-win32.h"
+
 void
 gaplessgrid() {
 	unsigned int n, cols, rows, cn, rn, i, cx, cy, cw, ch;

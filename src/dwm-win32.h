@@ -1,5 +1,3 @@
-#pragma once
-
 /* See LICENSE file for copyright and license details.
  *
  * This is a port of the popular X11 window manager dwm to Microsoft Windows.
@@ -15,6 +13,9 @@
  * To understand everything else, start reading WinMain().
  */
 
+#ifndef DWM_WIN32_H__
+#define DWM_WIN32_H__
+
 #define WIN32_LEAN_AND_MEAN
 #define _WIN32_WINNT 0x0600
 
@@ -25,14 +26,14 @@
 #pragma comment(lib, "dwmapi.lib")
 #endif
 
-#include <compat-5.3.h>
-#include <lauxlib.h>
 #include <lua.h>
 #include <lualib.h>
 
-#ifndef LUAJIT
-#include "../extern/luabitop/bit.c"
-#endif
+//
+#include <lauxlib.h>
+
+///
+#include <compat-5.3.h>
 
 #include <dwmapi.h>
 #include <shellapi.h>
@@ -43,6 +44,9 @@
 #include <time.h>
 #include <windows.h>
 #include <winuser.h>
+
+/* configuration, allows nested code to access above variables */
+#include "config.h"
 
 #include "mods/client.h"
 #include "mods/display.h"
@@ -150,3 +154,23 @@ typedef struct {
   bool isfloating;
   bool ignoreborder;
 } Rule;
+
+Client *nextchild(Client *p, Client *c);
+Client *nexttiled(Client *c);
+void resize(Client *c, int x, int y, int w, int h);
+
+extern Client *clients;
+
+/* bar geometry x, y, height and layout symbol width */
+static int bx, by, bh, blw;
+/* window area geometry x, y, width, height, bar excluded */
+extern int wx, wy, ww, wh;
+
+/* factor of master area size [0.05..0.95] */
+extern float mfact;
+
+typedef struct lua_State lua_State;
+extern void luaL_openlibs(lua_State *L);
+extern int luaopen_bit(lua_State *L);
+
+#endif /* DWM_WIN32_H__ */

@@ -29,10 +29,10 @@ static void grabkeys(HWND hwnd);
 static void killclient(const Arg *arg);
 static Client *manage(HWND hwnd);
 static void monocle(void);
-static Client *nextchild(Client *p, Client *c);
-static Client *nexttiled(Client *c);
+// static Client *nextchild(Client *p, Client *c);
+// static Client *nexttiled(Client *c);
 static void quit(const Arg *arg);
-static void resize(Client *c, int x, int y, int w, int h);
+// static void resize(Client *c, int x, int y, int w, int h);
 static void restack(void);
 static BOOL CALLBACK scan(HWND hwnd, LPARAM lParam);
 static void setborder(Client *c, bool border);
@@ -69,17 +69,18 @@ static HFONT font;
 static wchar_t stext[256];
 static int sx, sy, sw, sh; /* X display screen geometry x, y, width, height */
 static int bx, by, bh, blw;    /* bar geometry x, y, height and layout symbol width */
-static int wx, wy, ww, wh; /* window area geometry x, y, width, height, bar excluded */
+int wx, wy, ww, wh; /* window area geometry x, y, width, height, bar excluded */
 static unsigned int seltags, sellt;
 
-static Client *clients = NULL;
+Client *clients = NULL;
 static Client *sel = NULL;
 static Client *stack = NULL;
 static Layout *lt[] = { NULL, NULL };
 static UINT shellhookid;    /* Window Message id */
 
-/* configuration, allows nested code to access above variables */
-#include "config.h"
+#ifndef LUAJIT
+// #include "../extern/luabitop/bit.c"
+#endif
 
 /* compile-time check if all tags fit into an unsigned int bit array. */
 struct NumTags { wchar_t limitexceeded[sizeof(unsigned int) * 8 < LENGTH(tags) ? -1 : 1]; };
