@@ -1,0 +1,9 @@
+{
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+    "clangd.checkUpdates": true,
+    "C_Cpp.formatting": "clangFormat",
+    "cmake.useVsDeveloperEnvironment": "always",
+    "files.associations": {
+        "*clangd": "yaml"
+    }
+}
