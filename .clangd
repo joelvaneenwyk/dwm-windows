@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://json.schemastore.org/clangd.json
+# cspell:ignore Isrc
+CompileFlags:
+  Add:
+    - -xc
+    - -Wall
+    - -Iextern/lua/src/
+    - -Iextern/lua-compat-5.3/
+    - -Iextern/luabitop/
+    - -Iextern/luajit/src/
+    - -Iextern/sdl2/include/
+    - -Isrc/
+    - -Isrc/mods/
+    - --include=src/config.h
+  Remove:
+    # strip all other warning-related flags
+    - -W*
