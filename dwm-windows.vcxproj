@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{DD0C9973-047B-40A9-8DF2-AC6AF7BDF5E2}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>PROJECT_VER_MINOR=1;PROJECT_VER_PATCH=2;PROJECT_VER_MAJOR=0;PROJECT_NAME="dwm-win32";PROJECT_VER="0.1.2";WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>$(ProjectDir)/src;$(ProjectDir)/extern/lua/src;$(ProjectDir)/extern/lua-compat-5.3;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>$(ProjectDir)/src;$(ProjectDir)/extern/lua/src;$(ProjectDir)/extern/lua-compat-5.3;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>$(ProjectDir)/src;$(ProjectDir)/extern/lua/src;$(ProjectDir)/extern/lua-compat-5.3;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>$(ProjectDir)/src;$(ProjectDir)/extern/lua/src;$(ProjectDir)/extern/lua-compat-5.3;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="extern\lua\src\Makefile" />
+    <None Include="extern\sdl2\android-project\.gradle\4.10.2\filechanges\last-build.bin" />
+    <None Include="extern\sdl2\android-project\.gradle\4.10.2\filehashes\fileHashes.bin" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="extern\sdl2\src\main\windows\version.rc" />
+    <ResourceCompile Include="extern\sdl2\src\main\winrt\SDL2-WinRTResources.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="extern\lua\src\lapi.c" />
+    <ClCompile Include="extern\lua\src\lauxlib.c" />
+    <ClCompile Include="extern\lua\src\lbaselib.c" />
+    <ClCompile Include="extern\lua\src\lcode.c" />
+    <ClCompile Include="extern\lua\src\ldblib.c" />
+    <ClCompile Include="extern\lua\src\ldebug.c" />
+    <ClCompile Include="extern\lua\src\ldo.c" />
+    <ClCompile Include="extern\lua\src\ldump.c" />
+    <ClCompile Include="extern\lua\src\lfunc.c" />
+    <ClCompile Include="extern\lua\src\lgc.c" />
+    <ClCompile Include="extern\lua\src\linit.c" />
+    <ClCompile Include="extern\lua\src\liolib.c" />
+    <ClCompile Include="extern\lua\src\llex.c" />
+    <ClCompile Include="extern\lua\src\lmathlib.c" />
+    <ClCompile Include="extern\lua\src\lmem.c" />
+    <ClCompile Include="extern\lua\src\loadlib.c" />
+    <ClCompile Include="extern\lua\src\lobject.c" />
+    <ClCompile Include="extern\lua\src\lopcodes.c" />
+    <ClCompile Include="extern\lua\src\loslib.c" />
+    <ClCompile Include="extern\lua\src\lparser.c" />
+    <ClCompile Include="extern\lua\src\lstate.c" />
+    <ClCompile Include="extern\lua\src\lstring.c" />
+    <ClCompile Include="extern\lua\src\lstrlib.c" />
+    <ClCompile Include="extern\lua\src\ltable.c" />
+    <ClCompile Include="extern\lua\src\ltablib.c" />
+    <ClCompile Include="extern\lua\src\ltm.c" />
+    <ClCompile Include="extern\lua\src\lua.c" />
+    <ClCompile Include="extern\lua\src\luac.c" />
+    <ClCompile Include="extern\lua\src\lundump.c" />
+    <ClCompile Include="extern\lua\src\lvm.c" />
+    <ClCompile Include="extern\lua\src\lzio.c" />
+    <ClCompile Include="extern\lua\src\print.c" />
+    <ClCompile Include="src\bstack.c" />
+    <ClCompile Include="src\dwm-win32.c" />
+    <ClCompile Include="src\fibonacci.c" />
+    <ClCompile Include="src\gaplessgrid.c" />
+    <ClCompile Include="src\grid.c" />
+    <ClCompile Include="src\mods\client.c" />
+    <ClCompile Include="src\mods\display.c" />
+    <ClCompile Include="src\mods\dwm.c" />
+    <ClCompile Include="src\mods\eventemitter.c" />
+    <ClCompile Include="src\mods\hotkey.c" />
+    <ClCompile Include="src\win32_utf8.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="extern\lua\src\lapi.h" />
+    <ClInclude Include="extern\lua\src\lauxlib.h" />
+    <ClInclude Include="extern\lua\src\lcode.h" />
+    <ClInclude Include="extern\lua\src\ldebug.h" />
+    <ClInclude Include="extern\lua\src\ldo.h" />
+    <ClInclude Include="extern\lua\src\lfunc.h" />
+    <ClInclude Include="extern\lua\src\lgc.h" />
+    <ClInclude Include="extern\lua\src\llex.h" />
+    <ClInclude Include="extern\lua\src\llimits.h" />
+    <ClInclude Include="extern\lua\src\lmem.h" />
+    <ClInclude Include="extern\lua\src\lobject.h" />
+    <ClInclude Include="extern\lua\src\lopcodes.h" />
+    <ClInclude Include="extern\lua\src\lparser.h" />
+    <ClInclude Include="extern\lua\src\lstate.h" />
+    <ClInclude Include="extern\lua\src\lstring.h" />
+    <ClInclude Include="extern\lua\src\ltable.h" />
+    <ClInclude Include="extern\lua\src\ltm.h" />
+    <ClInclude Include="extern\lua\src\lua.h" />
+    <ClInclude Include="extern\lua\src\luaconf.h" />
+    <ClInclude Include="extern\lua\src\lualib.h" />
+    <ClInclude Include="extern\lua\src\lundump.h" />
+    <ClInclude Include="extern\lua\src\lvm.h" />
+    <ClInclude Include="extern\lua\src\lzio.h" />
+    <ClInclude Include="src\config.h" />
+    <ClInclude Include="src\dwm-win32.h" />
+    <ClInclude Include="src\mods\client.h" />
+    <ClInclude Include="src\mods\display.h" />
+    <ClInclude Include="src\mods\dwm.h" />
+    <ClInclude Include="src\mods\eventemitter.h" />
+    <ClInclude Include="src\mods\hotkey.h" />
+    <ClInclude Include="src\win32_utf8.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
