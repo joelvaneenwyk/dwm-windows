@@ -1,4 +1,4 @@
-#include "client.h"
+#include "mods/client.h"
 
 #include <stdint.h>
 

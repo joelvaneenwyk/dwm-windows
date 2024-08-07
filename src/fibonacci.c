@@ -1,3 +1,4 @@
+#include "dwm-win32.h"
 void
 fibonacci(int s) {
 	unsigned int i, n, nx, ny, nw, nh;
@@ -6,13 +7,13 @@ fibonacci(int s) {
 	for(n = 0, c = nexttiled(clients); c; c = nexttiled(c->next), n++);
 	if(n == 0)
 		return;
-	
-	nx = wx;
+
+        nx = wx;
 	ny = 0;
 	nw = ww;
 	nh = wh;
-	
-	for(i = 0, c = nexttiled(clients); c; c = nexttiled(c->next)) {
+
+        for(i = 0, c = nexttiled(clients); c; c = nexttiled(c->next)) {
 		if((i % 2 && nh / 2 > 2 * c->bw)
 		   || (!(i % 2) && nw / 2 > 2 * c->bw)) {
 			if(i < n - 1) {

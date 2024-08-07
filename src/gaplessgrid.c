@@ -1,3 +1,4 @@
+#include "dwm-win32.h"
 void
 gaplessgrid() {
 	unsigned int n, cols, rows, cn, rn, i, cx, cy, cw, ch;
@@ -27,8 +28,8 @@ gaplessgrid() {
 		cx = wx + cn*cw;
 		cy = wy + rn*ch;
 		resize(c, cx, cy, cw - 2 * c->bw, ch - 2 * c->bw);
-		
-		i++;
+
+                i++;
 		rn++;
 		if(rn >= rows) { 	/* jump to the next column */
 			rn = 0;

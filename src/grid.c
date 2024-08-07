@@ -1,3 +1,4 @@
+#include "dwm-win32.h"
 void
 grid() {
 	unsigned int i, n, cx, cy, cw, ch, aw, ah, cols, rows;

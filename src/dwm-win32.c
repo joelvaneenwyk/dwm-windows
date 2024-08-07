@@ -1,145 +1,6 @@
-/* See LICENSE file for copyright and license details.
- *
- * This is a port of the popular X11 window manager dwm to Microsoft Windows.
- * It was originally started by Marc Andre Tanner <mat at brain-dump dot org>
- *
- * Each child of the root window is called a client. Clients are organized 
- * in a global linked client list, the focus history is remembered through 
- * a global stack list. Each client contains a bit array to indicate the 
- * tags of a client.
- *
- * Keys and tagging rules are organized as arrays and defined in config.h.
- *
- * To understand everything else, start reading WinMain().
- */
-
-#define WIN32_LEAN_AND_MEAN
-#define _WIN32_WINNT            0x0600
-
-#if _MSC_VER
-#pragma comment(lib, "gdi32.lib")
-#pragma comment(lib, "shell32.lib")
-#pragma comment(lib, "user32.lib")
-#pragma comment(lib, "dwmapi.lib")
-#endif
-
-#include <lauxlib.h>
-#include <lua.h>
-#include <lualib.h>
-#include <compat-5.3.h>
-#ifndef LUAJIT
-#include "../extern/luabitop/bit.c"
-#endif
-
-#include <windows.h>
-#include <dwmapi.h>
-#include <winuser.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <shellapi.h>
-#include <stdbool.h>
-#include <time.h>
-
-#include "mods/dwm.h"
-#include "mods/eventemitter.h"
-#include "mods/display.h"
-#include "mods/client.h"
-#include "mods/hotkey.h"
-
-#define NAME                    L"dwm-win32"     /* Used for window name/class */
-
-#define ISVISIBLE(x)            ((x)->tags & tagset[seltags])
-#define ISFOCUSABLE(x)            (!(x)->isminimized && ISVISIBLE(x) && IsWindowVisible((x)->hwnd))
-#define LENGTH(x)               (sizeof x / sizeof x[0])
-#define MAX(a, b)               ((a) > (b) ? (a) : (b))
-#define MIN(a, b)               ((a) < (b) ? (a) : (b))
-#define MAXTAGLEN               16
-#define WIDTH(x)                ((x)->w + 2 * (x)->bw)
-#define HEIGHT(x)               ((x)->h + 2 * (x)->bw)
-#define TAGMASK                 ((int)((1LL << LENGTH(tags)) - 1))
-#define TEXTW(x)                (textnw(x, wcslen(x)))
-
-#ifdef NDEBUG
-#define debug(...) do { } while (false)
-#else
-#define debug(...) eprint(false, __VA_ARGS__)
-#endif
-
-#define die(...) if (TRUE) { eprint(true, __VA_ARGS__); eprint(true, L"Win32 Last Error: %d", GetLastError()); cleanup(NULL); exit(EXIT_FAILURE); }
-
-#define EVENT_OBJECT_CLOAKED 0x8017
-#define EVENT_OBJECT_UNCLOAKED 0x8018
-
-enum { CurNormal, CurResize, CurMove, CurLast };        /* cursor */
-enum { ColBorder, ColFG, ColBG, ColLast };            /* color */
-enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle };    /* clicks */
-
-typedef struct {
-    int x, y, w, h;
-    unsigned long norm[ColLast];
-    unsigned long sel[ColLast];
-    HDC hdc;
-} DC; /* draw context */
+#include "dwm-win32.h"
 
 DC dc;
-
-typedef union {
-    int i;
-    unsigned int ui;
-    float f;
-    void *v;
-} Arg;
-
-typedef struct {
-    unsigned int click;
-    unsigned int button;
-    unsigned int key;
-    void (*func)(const Arg *arg);
-    const Arg arg;
-} Button;
-
-typedef struct Client Client;
-struct Client {
-    HWND hwnd;
-    HWND parent;
-    HWND root;
-    int x, y, w, h;
-    int bw; // XXX: useless?
-    unsigned int tags;
-    bool isminimized;
-    bool isfloating;
-    bool isalive;
-    bool ignore;
-    bool ignoreborder;
-    bool border;
-    bool wasvisible;
-    bool isfixed, isurgent; // XXX: useless?
-    bool iscloaked; // WinStore apps
-    Client *next;
-    Client *snext;
-};
-
-typedef struct {
-    unsigned int mod;
-    unsigned int key;
-    void (*func)(const Arg *);
-    const Arg arg;
-} Key;
-
-typedef struct {
-    const wchar_t *symbol;
-    void (*arrange)(void);
-} Layout;
-
-typedef struct {
-    const wchar_t *class;
-    const wchar_t *title;
-    const wchar_t *processname;
-    unsigned int tags;
-    bool isfloating;
-    bool ignoreborder;
-} Rule;
 
 /* function declarations */
 static void applyrules(Client *c);
@@ -180,7 +41,7 @@ static void setlayout(const Arg *arg);
 static void setmfact(const Arg *arg);
 static void setup(lua_State *L, HINSTANCE hInstance);
 static void setupbar(HINSTANCE hInstance);
-static void showclientinfo(const Arg *arg); 
+static void showclientinfo(const Arg *arg);
 static void showhide(Client *c);
 static void spawn(const Arg *arg);
 static void tag(const Arg *arg);
@@ -206,7 +67,7 @@ static HWND dwmhwnd, barhwnd;
 static HWINEVENTHOOK wineventhook;
 static HFONT font;
 static wchar_t stext[256];
-static int sx, sy, sw, sh; /* X display screen geometry x, y, width, height */ 
+static int sx, sy, sw, sh; /* X display screen geometry x, y, width, height */
 static int bx, by, bh, blw;    /* bar geometry x, y, height and layout symbol width */
 static int wx, wy, ww, wh; /* window area geometry x, y, width, height, bar excluded */
 static unsigned int seltags, sellt;
@@ -225,11 +86,10 @@ struct NumTags { wchar_t limitexceeded[sizeof(unsigned int) * 8 < LENGTH(tags) ?
 
 /* elements of the window whose color should be set to the values in the array below */
 static int colorwinelements[] = { COLOR_ACTIVEBORDER, COLOR_INACTIVEBORDER };
-static COLORREF colors[2][LENGTH(colorwinelements)] = { 
-    { 0, 0 }, /* used to save the values before dwm started */
-    { selbordercolor, normbordercolor },
+static COLORREF colors[2][LENGTH(colorwinelements)] = {
+    {0, 0}, /* used to save the values before dwm started */
+    {selbordercolor, normbordercolor},
 };
-
 
 void
 applyrules(Client *c) {
@@ -244,7 +104,7 @@ applyrules(Client *c) {
         && (!r->processname || wcsstr(getclientprocessname(c->hwnd), r->processname))) {
             c->isfloating = r->isfloating;
             c->ignoreborder = r->ignoreborder;
-            c->tags |= r->tags & TAGMASK ? r->tags & TAGMASK : tagset[seltags]; 
+            c->tags |= r->tags & TAGMASK ? r->tags & TAGMASK : tagset[seltags];
         }
     }
     if (!c->tags)
@@ -314,7 +174,7 @@ cleanup(lua_State *L) {
 
     if (barhwnd)
         KillTimer(barhwnd, 1);
-    
+
     for (i = 0; i < LENGTH(keys); i++) {
         UnregisterHotKey(dwmhwnd, i);
     }
@@ -329,7 +189,7 @@ cleanup(lua_State *L) {
     while (stack)
         unmanage(stack);
 
-    SetSysColors(LENGTH(colorwinelements), colorwinelements, colors[0]); 
+    SetSysColors(LENGTH(colorwinelements), colorwinelements, colors[0]);
 
     DestroyWindow(dwmhwnd);
 
@@ -530,7 +390,7 @@ eprint(bool premortem, const wchar_t *errstr, ...) {
 cleanup:
     if (buffer != NULL)
         free(buffer);
-    
+
     va_end(ap);
 }
 
@@ -696,7 +556,7 @@ ismanageable(HWND hwnd) {
     if (getclient(hwnd))
         return true;
 
-    HWND parent = GetParent(hwnd);    
+    HWND parent = GetParent(hwnd);
     int style = GetWindowLong(hwnd, GWL_STYLE);
     int exstyle = GetWindowLong(hwnd, GWL_EXSTYLE);
     bool pok = (parent != 0 && ismanageable(parent));
@@ -765,19 +625,19 @@ ismanageable(HWND hwnd) {
 
     /*
      *    WS_EX_APPWINDOW
-     *        Forces a top-level window onto the taskbar when 
+     *        Forces a top-level window onto the taskbar when
      *        the window is visible.
      *
      *    WS_EX_TOOLWINDOW
-     *        Creates a tool window; that is, a window intended 
-     *        to be used as a floating toolbar. A tool window 
-     *        has a title bar that is shorter than a normal 
-     *        title bar, and the window title is drawn using 
-     *        a smaller font. A tool window does not appear in 
-     *        the taskbar or in the dialog that appears when 
-     *        the user presses ALT+TAB. If a tool window has 
-     *        a system menu, its icon is not displayed on the 
-     *        title bar. However, you can display the system 
+     *        Creates a tool window; that is, a window intended
+     *        to be used as a floating toolbar. A tool window
+     *        has a title bar that is shorter than a normal
+     *        title bar, and the window title is drawn using
+     *        a smaller font. A tool window does not appear in
+     *        the taskbar or in the dialog that appears when
+     *        the user presses ALT+TAB. If a tool window has
+     *        a system menu, its icon is not displayed on the
+     *        title bar. However, you can display the system
      *        menu by right-clicking or by typing ALT+SPACE.
      */
 
@@ -802,64 +662,67 @@ killclient(const Arg *arg) {
     PostMessage(sel->hwnd, WM_CLOSE, 0, 0);
 }
 
-Client*
-manage(HWND hwnd) {    
-    Client *c = getclient(hwnd);
+Client *manage(HWND hwnd) {
+  Client *c = getclient(hwnd);
 
-    if (c)
-        return c;
-
-    debug(L" manage %s\n", getclienttitle(hwnd));
-
-    WINDOWINFO wi = {
-        .cbSize = sizeof(WINDOWINFO),
-    };
-
-    if (!GetWindowInfo(hwnd, &wi))
-        return NULL;
-
-    if (!(c = calloc(1, sizeof(Client))))
-        die(L"fatal: could not calloc() %u bytes for new client\n", sizeof(Client));
-
-    c->hwnd = hwnd;
-    c->parent = GetParent(hwnd);
-    c->root = getroot(hwnd);
-    c->isalive = true;
-    c->iscloaked = iscloaked(hwnd);
-    c->isminimized = IsIconic(hwnd);
-
-    static WINDOWPLACEMENT wp = {
-        .length = sizeof(WINDOWPLACEMENT),
-        .showCmd = SW_RESTORE,
-    };
-
-    if (IsWindowVisible(hwnd) && !c->isminimized)
-        SetWindowPlacement(hwnd, &wp);
-    
-    c->isfloating = (!(wi.dwStyle & WS_MINIMIZEBOX) && !(wi.dwStyle & WS_MAXIMIZEBOX));
-
-    c->ignoreborder = iscloaked(hwnd);
-
-    debug(L" window style: %d\n", wi.dwStyle);
-    debug(L"     minimize: %d\n", wi.dwStyle & WS_MINIMIZEBOX);
-    debug(L"     maximize: %d\n", wi.dwStyle & WS_MAXIMIZEBOX);
-    debug(L"        popup: %d\n", wi.dwStyle & WS_POPUP);
-    debug(L"   isfloating: %d\n", c->isfloating);
-
-    applyrules(c);
-
-    if (!c->isfloating)
-        setborder(c, false);
-        
-
-    if (c->isfloating && IsWindowVisible(hwnd) && !c->isminimized) {
-        debug(L" new floating window: x: %d y: %d w: %d h: %d\n", wi.rcWindow.left, wi.rcWindow.top, wi.rcWindow.right - wi.rcWindow.left, wi.rcWindow.bottom - wi.rcWindow.top);
-        resize(c, wi.rcWindow.left, wi.rcWindow.top, wi.rcWindow.right - wi.rcWindow.left, wi.rcWindow.bottom - wi.rcWindow.top);
-    }
-
-    attach(c);
-    attachstack(c);
+  if (c)
     return c;
+
+  debug(L" manage %s\n", getclienttitle(hwnd));
+
+  WINDOWINFO wi = {
+      .cbSize = sizeof(WINDOWINFO),
+  };
+
+  if (!GetWindowInfo(hwnd, &wi))
+    return NULL;
+
+  if (!(c = calloc(1, sizeof(Client))))
+    die(L"fatal: could not calloc() %u bytes for new client\n", sizeof(Client));
+
+  c->hwnd = hwnd;
+  c->parent = GetParent(hwnd);
+  c->root = getroot(hwnd);
+  c->isalive = true;
+  c->iscloaked = iscloaked(hwnd);
+  c->isminimized = IsIconic(hwnd);
+
+  static WINDOWPLACEMENT wp = {
+      .length = sizeof(WINDOWPLACEMENT),
+      .showCmd = SW_RESTORE,
+  };
+
+  if (IsWindowVisible(hwnd) && !c->isminimized)
+    SetWindowPlacement(hwnd, &wp);
+
+  c->isfloating =
+      (!(wi.dwStyle & WS_MINIMIZEBOX) && !(wi.dwStyle & WS_MAXIMIZEBOX));
+
+  c->ignoreborder = iscloaked(hwnd);
+
+  debug(L" window style: %d\n", wi.dwStyle);
+  debug(L"     minimize: %d\n", wi.dwStyle & WS_MINIMIZEBOX);
+  debug(L"     maximize: %d\n", wi.dwStyle & WS_MAXIMIZEBOX);
+  debug(L"        popup: %d\n", wi.dwStyle & WS_POPUP);
+  debug(L"   isfloating: %d\n", c->isfloating);
+
+  applyrules(c);
+
+  if (!c->isfloating)
+    setborder(c, false);
+
+  if (c->isfloating && IsWindowVisible(hwnd) && !c->isminimized) {
+    debug(L" new floating window: x: %d y: %d w: %d h: %d\n", wi.rcWindow.left,
+          wi.rcWindow.top, wi.rcWindow.right - wi.rcWindow.left,
+          wi.rcWindow.bottom - wi.rcWindow.top);
+    resize(c, wi.rcWindow.left, wi.rcWindow.top,
+           wi.rcWindow.right - wi.rcWindow.left,
+           wi.rcWindow.bottom - wi.rcWindow.top);
+  }
+
+  attach(c);
+  attachstack(c);
+  return c;
 }
 
 void
@@ -942,7 +805,7 @@ LRESULT CALLBACK barhandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_TIMER:
             drawbar();
         default:
-            return DefWindowProc(hwnd, msg, wParam, lParam); 
+          return DefWindowProc(hwnd, msg, wParam, lParam);
     }
 
     return 0;
@@ -1005,7 +868,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                             Client *t = sel;
                             managechildwindows(c);
                             setselected(c);
-                            /* check if the previously selected 
+                            /* check if the previously selected
                              * window got minimized
                              */
                             if (t && (t->isminimized = IsIconic(t->hwnd))) {
@@ -1015,26 +878,26 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                             /* the newly focused window was minimized */
                             if (sel && sel->isminimized) {
                                 debug(L" newly active window was minimized: %s\n", getclienttitle(sel->hwnd));
-                                sel->isminimized = false;                                
+                                sel->isminimized = false;
                                 zoom(NULL);
                             }
                         } else  {
-                            /* Some window don't seem to generate 
-                             * HSHELL_WINDOWCREATED messages therefore 
-                              * we check here whether we should manage
-                              * the window or not.
-                              */
-                            if (ismanageable((HWND)lParam)) {
-                                c = manage((HWND)lParam);
-                                managechildwindows(c);
-                                setselected(c);
-                                arrange();
-                            }
+                          /* Some window don't seem to generate
+                           * HSHELL_WINDOWCREATED messages therefore
+                           * we check here whether we should manage
+                           * the window or not.
+                           */
+                          if (ismanageable((HWND)lParam)) {
+                            c = manage((HWND)lParam);
+                            managechildwindows(c);
+                            setselected(c);
+                            arrange();
+                          }
                         }
                         break;
                 }
             } else
-                return DefWindowProc(hwnd, msg, wParam, lParam); 
+              return DefWindowProc(hwnd, msg, wParam, lParam);
     }
 
     return 0;
@@ -1067,15 +930,14 @@ wineventproc(HWINEVENTHOOK heventhook, DWORD event, HWND hwnd, LONG object, LONG
     }
 }
 
-BOOL CALLBACK 
-scan(HWND hwnd, LPARAM lParam) {
-    Client *c = getclient(hwnd);
-    if (c)
-        c->isalive = true;
-    else if (ismanageable(hwnd))
-        manage(hwnd);
+BOOL CALLBACK scan(HWND hwnd, LPARAM lParam) {
+  Client *c = getclient(hwnd);
+  if (c)
+    c->isalive = true;
+  else if (ismanageable(hwnd))
+    manage(hwnd);
 
-    return TRUE;
+  return TRUE;
 }
 
 void
@@ -1108,12 +970,17 @@ setborder(Client *c, bool border) {
         if (border) {
             SetWindowLong(c->hwnd, GWL_STYLE, (GetWindowLong(c->hwnd, GWL_STYLE) | (WS_CAPTION | WS_SIZEBOX)));
         } else {
-            /* XXX: ideally i would like to use the standard window border facilities and just modify the 
-             *      color with SetSysColor but this only seems to work if we leave WS_SIZEBOX enabled which
-             *      is not optimal.
-             */
-            SetWindowLong(c->hwnd, GWL_STYLE, (GetWindowLong(c->hwnd, GWL_STYLE) & ~(WS_CAPTION | WS_SIZEBOX)) | WS_BORDER | WS_THICKFRAME);
-            SetWindowLong(c->hwnd, GWL_EXSTYLE, (GetWindowLong(c->hwnd, GWL_EXSTYLE) & ~(WS_EX_CLIENTEDGE | WS_EX_WINDOWEDGE)));
+          /* XXX: ideally i would like to use the standard window border
+           * facilities and just modify the color with SetSysColor but this only
+           * seems to work if we leave WS_SIZEBOX enabled which is not optimal.
+           */
+          SetWindowLong(
+              c->hwnd, GWL_STYLE,
+              (GetWindowLong(c->hwnd, GWL_STYLE) & ~(WS_CAPTION | WS_SIZEBOX)) |
+                  WS_BORDER | WS_THICKFRAME);
+          SetWindowLong(c->hwnd, GWL_EXSTYLE,
+                        (GetWindowLong(c->hwnd, GWL_EXSTYLE) &
+                         ~(WS_EX_CLIENTEDGE | WS_EX_WINDOWEDGE)));
         }
         SetWindowPos(c->hwnd, 0, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER );
         c->border = border;
@@ -1219,9 +1086,9 @@ setup(lua_State *L, HINSTANCE hInstance) {
     /* save colors so we can restore them in cleanup */
     for (i = 0; i < LENGTH(colorwinelements); i++)
         colors[0][i] = GetSysColor(colorwinelements[i]);
-    
-    SetSysColors(LENGTH(colorwinelements), colorwinelements, colors[1]); 
-    
+
+    SetSysColors(LENGTH(colorwinelements), colorwinelements, colors[1]);
+
     HWND hwnd = FindWindowW(L"Shell_TrayWnd", NULL);
     if (hwnd)
         setvisibility(hwnd, showexploreronstart);
@@ -1258,7 +1125,7 @@ setup(lua_State *L, HINSTANCE hInstance) {
     grabkeys(dwmhwnd);
 
     arrange();
-    
+
     if (!RegisterShellHookWindow(dwmhwnd))
         die(L"Could not RegisterShellHookWindow");
 
@@ -1297,21 +1164,16 @@ setupbar(HINSTANCE hInstance) {
     if (!RegisterClassW(&winClass))
         die(L"Error registering window class");
 
-    barhwnd = CreateWindowExW(
-        WS_EX_TOOLWINDOW,
-        L"dwm-bar",
-        NULL, /* window title */
-        WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, 
-        0, 0, 0, 0, 
-        NULL, /* parent window */
-        NULL, /* menu */
-        hInstance,
-        NULL
-    );
+    barhwnd =
+        CreateWindowExW(WS_EX_TOOLWINDOW, L"dwm-bar", NULL, /* window title */
+                        WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, 0, 0, 0,
+                        0, NULL, /* parent window */
+                        NULL,    /* menu */
+                        hInstance, NULL);
 
     /* calculate width of the largest layout symbol */
     dc.hdc = GetWindowDC(barhwnd);
-    HFONT font = (HFONT)GetStockObject(SYSTEM_FONT); 
+    HFONT font = (HFONT)GetStockObject(SYSTEM_FONT);
     SelectObject(dc.hdc, font);
 
     for (blw = i = 0; LENGTH(layouts) > 1 && i < LENGTH(layouts); i++) {
@@ -1383,7 +1245,7 @@ textnw(const wchar_t *text, unsigned int len) {
     GetTextExtentPoint32W(dc.hdc, text, len, &size);
     if (size.cx > 0)
         size.cx += textmargin;
-    return size.cx;  
+    return size.cx;
 }
 
 
@@ -1448,7 +1310,7 @@ toggleexplorer(const Arg *arg) {
 
     updategeom();
     updatebar();
-    arrange();        
+    arrange();
 }
 
 
@@ -1469,7 +1331,7 @@ toggletag(const Arg *arg) {
 
     if (!sel)
         return;
-    
+
     mask = sel->tags ^ (arg->ui & TAGMASK);
     if (mask) {
         sel->tags = mask;
@@ -1537,17 +1399,17 @@ updategeom(void) {
     /* check if the windows taskbar is visible and adjust
      * the workspace accordingly.
      */
-    if (hwnd && IsWindowVisible(hwnd)) {    
-        SystemParametersInfo(SPI_GETWORKAREA, 0, &wa, 0);
-        sx = wa.left;
-        sy = wa.top;
-        sw = wa.right - wa.left;
-        sh = wa.bottom - wa.top;
+    if (hwnd && IsWindowVisible(hwnd)) {
+      SystemParametersInfo(SPI_GETWORKAREA, 0, &wa, 0);
+      sx = wa.left;
+      sy = wa.top;
+      sw = wa.right - wa.left;
+      sh = wa.bottom - wa.top;
     } else {
-        sx = GetSystemMetrics(SM_XVIRTUALSCREEN);
-        sy = GetSystemMetrics(SM_YVIRTUALSCREEN);
-        sw = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-        sh = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+      sx = GetSystemMetrics(SM_XVIRTUALSCREEN);
+      sy = GetSystemMetrics(SM_YVIRTUALSCREEN);
+      sw = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+      sh = GetSystemMetrics(SM_CYVIRTUALSCREEN);
     }
 
     bx = sx;
