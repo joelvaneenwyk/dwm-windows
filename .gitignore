@@ -1,7 +1,7 @@
 *.exe
 *.pdb
 
-tags
+tags/
 *.swp
 *.orig
 
@@ -12,3 +12,9 @@ dwm-win32.log
 zig-cache/
 
 extern/sdl2/android-project/.gradle/
+
+.vs/
+dwm-windows/
+
+*.obj
+*.vcxproj.user
