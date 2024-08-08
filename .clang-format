@@ -25,12 +25,10 @@ AlwaysBreakAfterReturnType: TopLevelDefinitions
 AlwaysBreakTemplateDeclarations: Yes
 
 ColumnLimit: 120
-IncludeBlocks: Regroup
 MaxEmptyLinesToKeep: 1
 SpacesBeforeTrailingComments: 4
 
 UseTab: Never
-TabWidth: 2
 IndentWidth: 4
 IndentAccessModifiers: true
 IndentCaseBlocks: true
@@ -43,8 +41,29 @@ SpaceInEmptyBlock: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
 
-
 NamespaceIndentation: None
 PointerAlignment: Left
 ReflowComments: false
 SortIncludes: CaseInsensitive
+
+IncludeBlocks: Preserve
+IncludeIsMainSourceRegex: ''
+IncludeCategories:
+  - Regex:           '^"src/dwm-win32'
+    Priority:        0
+    CaseSensitive:   true
+  - Regex:           '^"(src)/'
+    Priority:        1
+    CaseSensitive:   true
+  - Regex:           '^"(src)/(mods)/'
+    Priority:        1
+    CaseSensitive:   true
+  - Regex:           '.*'
+    Priority:        2
+  - Regex:           '^"(llvm|llvm-c|clang|clang-c)/'
+    Priority:        3
+    CaseSensitive:   true
+  - Regex:           '^((<|")(gtest|gmock|isl|json)/)'
+    Priority:        4
+  - Regex:           '<[[:alnum:].]+>'
+    Priority:        5
