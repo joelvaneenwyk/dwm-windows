@@ -12,4 +12,5 @@ insert_final_newline = true
 
 [*.{c,h}]
 indent_size = 4
-indent_style = tab
+indent_style = space
+
