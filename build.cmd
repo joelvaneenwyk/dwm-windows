@@ -6,9 +6,6 @@ setlocal EnableExtensions
   if not exist "%~dp0bin" (
     mkdir "%~dp0bin"
   )
-  if not exist "%~dp0src\config.h" (
-    copy "%~dp0config.h.in" "%~dp0src\config.h"
-  )
 
   REM Add the following to get more verbose output
   REM -v
