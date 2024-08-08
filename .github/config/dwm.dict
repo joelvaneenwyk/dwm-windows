@@ -80,6 +80,7 @@ MAXTAGLEN
 mfact
 MODKEY
 movestack
+msbuild
 MSCTFIME
 msvc
 MULTRET
