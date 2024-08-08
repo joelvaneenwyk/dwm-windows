@@ -30,3 +30,7 @@ dwm-win32.log
 /*.txt
 
 .task/
+.cmake/
+cmake-*/
+
+.idea/

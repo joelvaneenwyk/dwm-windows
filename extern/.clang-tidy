@@ -1,0 +1,4 @@
+# File: dwm-windows/extern/.clang-tidy
+
+# Disable all checks in this folder.
+Checks: '-*'
