@@ -11,5 +11,26 @@ tasks:
       - task: clang-format
 
   clang-format:
+    silent: true
+    sources:
+      - src/**/*.c
+      - src/**/*.h
     cmds:
-      - find src/ -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs clang-format -i
+      - for: sources
+        cmd: |
+          clang-format -i "{{joinPath .TASKFILE_DIR .ITEM}}"
+      # - for: sources
+      #   cmd: |
+      #     file="{{joinPath .TASKFILE_DIR .ITEM}}"
+      #     base=$(basename "$file")
+      #     if [[ $base == .* ]]; then
+      #       echo "Skipped config file: '$file'"
+      #     else
+      #       if clang-format -i "$file"; then
+      #         echo "Formatted file: '$file'"
+      #       fi
+      #     fi
+      #- cmd: |
+      #    clang-format -i {{ .SOURCES }}
+      #- cmd: |
+      #    find src/ -iname '*.hpp' -o -iname '*.h' -o -iname '*.cpp' | xargs clang-format -i
