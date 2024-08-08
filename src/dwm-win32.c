@@ -1122,13 +1122,15 @@ setup(lua_State* L, HINSTANCE hInstance) {
     winClass.lpszMenuName = NULL;
     winClass.lpszClassName = NAME;
 
-    if (!RegisterClassExW(&winClass))
+    if (!RegisterClassExW(&winClass)) {
         die(L"Error registering window class");
+    }
 
     dwmhwnd = CreateWindowExW(0, NAME, NAME, 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, hInstance, NULL);
 
-    if (!dwmhwnd)
+    if (!dwmhwnd) {
         die(L"Error creating window");
+    }
 
     updategeom();
 
