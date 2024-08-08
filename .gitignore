@@ -8,13 +8,23 @@ tags/
 .clangd/
 compile_commands.json
 
-dwm-win32.log
 zig-cache/
+.zig-cache/
+zig-out/
+*.zig
+*.zig.zon
 
 extern/sdl2/android-project/.gradle/
 
 .vs/
 dwm-windows/
+bin/
+.build/
+/x64/
+/Release/
 
 *.obj
 *.vcxproj.user
+
+dwm-win32.log
+/*.txt
