@@ -10,48 +10,50 @@
 
 DC dc;
 
-typedef BOOL (*RegisterShellHookWindowProc) (HWND);
+typedef BOOL (*RegisterShellHookWindowProc)(HWND);
 
 static HWND dwmhwnd, barhwnd;
 static HWINEVENTHOOK wineventhook;
 static HFONT font;
 static wchar_t stext[256];
-static int sx, sy, sw, sh; /* X display screen geometry x, y, width, height */
-static int bx, by, bh, blw;    /* bar geometry x, y, height and layout symbol width */
-int wx, wy, ww, wh; /* window area geometry x, y, width, height, bar excluded */
+static int sx, sy, sw, sh;  /* X display screen geometry x, y, width, height */
+static int bx, by, bh, blw; /* bar geometry x, y, height and layout symbol width */
+int wx, wy, ww, wh;         /* window area geometry x, y, width, height, bar excluded */
 static unsigned int seltags, sellt;
 
-Client *clients = NULL;
-static Client *sel = NULL;
-static Client *stack = NULL;
-static Layout *lt[] = { NULL, NULL };
-static UINT shellhookid;    /* Window Message id */
+Client* clients = NULL;
+static Client* sel = NULL;
+static Client* stack = NULL;
+static Layout* lt[] = {NULL, NULL};
+static UINT shellhookid; /* Window Message id */
 
 #ifndef LUAJIT
 // #include "../extern/luabitop/bit.c"
 #endif
 
 /* compile-time check if all tags fit into an unsigned int bit array. */
-struct NumTags { wchar_t limitexceeded[sizeof(unsigned int) * 8 < LENGTH(tags) ? -1 : 1]; };
+struct NumTags {
+        wchar_t limitexceeded[sizeof(unsigned int) * 8 < LENGTH(tags) ? -1 : 1];
+};
 
 /* elements of the window whose color should be set to the values in the array below */
-static int colorwinelements[] = { COLOR_ACTIVEBORDER, COLOR_INACTIVEBORDER };
+static int colorwinelements[] = {COLOR_ACTIVEBORDER, COLOR_INACTIVEBORDER};
 static COLORREF colors[2][LENGTH(colorwinelements)] = {
     {0, 0}, /* used to save the values before dwm started */
     {selbordercolor, normbordercolor},
 };
 
 void
-applyrules(Client *c) {
+applyrules(Client* c) {
     unsigned int i;
-    Rule *r;
+    Rule* r;
 
     /* rule matching */
     for (i = 0; i < LENGTH(rules); i++) {
         r = &rules[i];
-        if ((!r->title || wcsstr(getclienttitle(c->hwnd), r->title))
-        && (!r->class || wcsstr(getclientclassname(c->hwnd), r->class))
-        && (!r->processname || wcsstr(getclientprocessname(c->hwnd), r->processname))) {
+        if ((!r->title || wcsstr(getclienttitle(c->hwnd), r->title)) &&
+            (!r->class || wcsstr(getclientclassname(c->hwnd), r->class)) &&
+            (!r->processname || wcsstr(getclientprocessname(c->hwnd), r->processname))) {
             c->isfloating = r->isfloating;
             c->ignoreborder = r->ignoreborder;
             c->tags |= r->tags & TAGMASK ? r->tags & TAGMASK : tagset[seltags];
@@ -73,19 +75,19 @@ arrange(void) {
 }
 
 void
-attach(Client *c) {
+attach(Client* c) {
     c->next = clients;
     clients = c;
 }
 
 void
-attachstack(Client *c) {
+attachstack(Client* c) {
     c->snext = stack;
     stack = c;
 }
 
 void
-buttonpress(unsigned int button, POINTS *point) {
+buttonpress(unsigned int button, POINTS* point) {
     unsigned int i, x, click;
     Arg arg = {0};
 
@@ -94,7 +96,9 @@ buttonpress(unsigned int button, POINTS *point) {
 
     i = x = 0;
 
-    do { x += TEXTW(tags[i]); } while (point->x >= x && ++i < LENGTH(tags));
+    do {
+        x += TEXTW(tags[i]);
+    } while (point->x >= x && ++i < LENGTH(tags));
     if (i < LENGTH(tags)) {
         click = ClkTagBar;
         arg.ui = 1 << i;
@@ -111,8 +115,8 @@ buttonpress(unsigned int button, POINTS *point) {
     }
 
     for (i = 0; i < LENGTH(buttons); i++) {
-        if (click == buttons[i].click && buttons[i].func && buttons[i].button == button
-            && (!buttons[i].key || GetKeyState(buttons[i].key) < 0)) {
+        if (click == buttons[i].click && buttons[i].func && buttons[i].button == button &&
+            (!buttons[i].key || GetKeyState(buttons[i].key) < 0)) {
             buttons[i].func(click == ClkTagBar && buttons[i].arg.i == 0 ? &arg : &buttons[i].arg);
             break;
         }
@@ -120,10 +124,10 @@ buttonpress(unsigned int button, POINTS *point) {
 }
 
 void
-cleanup(lua_State *L) {
+cleanup(lua_State* L) {
     int i;
     Arg a = {.ui = ~0};
-    Layout foo = { L"", NULL };
+    Layout foo = {L"", NULL};
 
     if (barhwnd) {
         KillTimer(barhwnd, 1);
@@ -159,20 +163,20 @@ cleanup(lua_State *L) {
         DeleteObject(font);
     }
 
-  if (L) {
-		lua_close(L);
-		L = NULL;
-	}
+    if (L) {
+        lua_close(L);
+        L = NULL;
+    }
 }
 
 void
-clearurgent(Client *c) {
+clearurgent(Client* c) {
     c->isurgent = false;
 }
 
 void
-detach(Client *c) {
-    Client **tc;
+detach(Client* c) {
+    Client** tc;
 
     for (tc = &clients; *tc && *tc != c; tc = &(*tc)->next) {
         ;
@@ -181,8 +185,8 @@ detach(Client *c) {
 }
 
 void
-detachstack(Client *c) {
-    Client **tc;
+detachstack(Client* c) {
+    Client** tc;
 
     for (tc = &stack; *tc && *tc != c; tc = &(*tc)->snext) {
         ;
@@ -198,8 +202,8 @@ drawbar(void) {
 
     int x;
     unsigned int i, occ = 0, urg = 0;
-    unsigned long *col;
-    Client *c;
+    unsigned long* col;
+    Client* c;
     time_t timer;
     struct tm date;
     wchar_t timestr[256];
@@ -273,7 +277,7 @@ drawbar(void) {
 void
 drawsquare(bool filled, bool empty, bool invert, unsigned long col[ColLast]) {
     static int size = 5;
-    RECT r = { .left = dc.x + 1, .top = dc.y + 1, .right = dc.x + size, .bottom = dc.y + size };
+    RECT r = {.left = dc.x + 1, .top = dc.y + 1, .right = dc.x + size, .bottom = dc.y + size};
 
     HBRUSH brush = CreateSolidBrush(col[invert ? ColBG : ColFG]);
     SelectObject(dc.hdc, brush);
@@ -287,8 +291,8 @@ drawsquare(bool filled, bool empty, bool invert, unsigned long col[ColLast]) {
 }
 
 void
-drawtext(const wchar_t *text, unsigned long col[ColLast], bool invert) {
-    RECT r = { .left = dc.x, .top = dc.y, .right = dc.x + dc.w, .bottom = dc.y + dc.h };
+drawtext(const wchar_t* text, unsigned long col[ColLast], bool invert) {
+    RECT r = {.left = dc.x, .top = dc.y, .right = dc.x + dc.w, .bottom = dc.y + dc.h};
 
     HPEN pen = CreatePen(PS_SOLID, borderpx, selbordercolor);
     HBRUSH brush = CreateSolidBrush(col[invert ? ColFG : ColBG]);
@@ -307,14 +311,14 @@ drawtext(const wchar_t *text, unsigned long col[ColLast], bool invert) {
         if (!font) {
             font = (HFONT)GetStockObject(SYSTEM_FONT);
         }
-        }
+    }
     SelectObject(dc.hdc, font);
 
     DrawTextW(dc.hdc, text, -1, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }
 
 void
-eprint(bool premortem, const wchar_t *errstr, ...) {
+eprint(bool premortem, const wchar_t* errstr, ...) {
     va_list ap;
     int num_of_chars;
     wchar_t* buffer = NULL;
@@ -361,7 +365,7 @@ cleanup:
 }
 
 void
-setselected(Client *c) {
+setselected(Client* c) {
     if (!c || !ISVISIBLE(c)) {
         for (c = stack; c && !ISVISIBLE(c); c = c->snext) {
             ;
@@ -383,7 +387,7 @@ setselected(Client *c) {
 }
 
 void
-focus(Client *c) {
+focus(Client* c) {
     setselected(c);
     if (sel) {
         SetForegroundWindow(sel->hwnd);
@@ -391,7 +395,7 @@ focus(Client *c) {
 }
 
 void
-focusstack(const Arg *arg) {
+focusstack(const Arg* arg) {
     Client *c = NULL, *i;
 
     if (!sel) {
@@ -406,8 +410,7 @@ focusstack(const Arg *arg) {
                 ;
             }
         }
-    }
-    else {
+    } else {
         for (i = clients; i != sel; i = i->next) {
             if (ISFOCUSABLE(i)) {
                 c = i;
@@ -427,14 +430,14 @@ focusstack(const Arg *arg) {
     }
 }
 
-Client *
-managechildwindows(Client *p) {
+Client*
+managechildwindows(Client* p) {
     Client *c, *t;
     EnumChildWindows(p->hwnd, scan, 0);
     /* remove all child windows which were not part
      * of the enumeration above.
      */
-    for (c = clients; c; ) {
+    for (c = clients; c;) {
         if (c->parent == p->hwnd) {
             /* XXX: ismanageable isn't that reliable or some
              *      windows change over time which means they
@@ -459,9 +462,9 @@ managechildwindows(Client *p) {
     return nextchild(p, clients);
 }
 
-Client *
+Client*
 getclient(HWND hwnd) {
-    Client *c;
+    Client* c;
 
     for (c = clients; c; c = c->next) {
         if (c->hwnd == hwnd) {
@@ -502,7 +505,6 @@ getclientprocessname(HWND hwnd) {
     }
     return NULL;
 }
-
 
 HWND
 getroot(HWND hwnd) {
@@ -552,8 +554,8 @@ ismanageable(HWND hwnd) {
     bool istool = exstyle & WS_EX_TOOLWINDOW;
     bool isapp = exstyle & WS_EX_APPWINDOW;
     bool noactiviate = exstyle & WS_EX_NOACTIVATE;
-    const wchar_t *classname = getclientclassname(hwnd);
-    const wchar_t *title = getclienttitle(hwnd);
+    const wchar_t* classname = getclientclassname(hwnd);
+    const wchar_t* title = getclienttitle(hwnd);
 
     if (pok && !getclient(parent)) {
         manage(parent);
@@ -592,26 +594,17 @@ ismanageable(HWND hwnd) {
         return false;
     }
 
-    if (wcsstr(classname, L"Windows.UI.Core.CoreWindow") && (
-        wcsstr(title, L"Windows Shell Experience Host") ||
-        wcsstr(title, L"Microsoft Text Input Application") ||
-        wcsstr(title, L"Action center") ||
-        wcsstr(title, L"New Notification") ||
-        wcsstr(title, L"Date and Time Information") ||
-        wcsstr(title, L"Volume Control") ||
-        wcsstr(title, L"Network Connections") ||
-        wcsstr(title, L"Cortana") ||
-        wcsstr(title, L"Start") ||
-        wcsstr(title, L"Windows Default Lock Screen") ||
-        wcsstr(title, L"Search"))) {
+    if (wcsstr(classname, L"Windows.UI.Core.CoreWindow") &&
+        (wcsstr(title, L"Windows Shell Experience Host") || wcsstr(title, L"Microsoft Text Input Application") ||
+         wcsstr(title, L"Action center") || wcsstr(title, L"New Notification") ||
+         wcsstr(title, L"Date and Time Information") || wcsstr(title, L"Volume Control") ||
+         wcsstr(title, L"Network Connections") || wcsstr(title, L"Cortana") || wcsstr(title, L"Start") ||
+         wcsstr(title, L"Windows Default Lock Screen") || wcsstr(title, L"Search"))) {
         return false;
     }
 
-    if (wcsstr(classname, L"ForegroundStaging") ||
-        wcsstr(classname, L"ApplicationManager_DesktopShellWindow") ||
-        wcsstr(classname, L"Static") ||
-        wcsstr(classname, L"Scrollbar") ||
-        wcsstr(classname, L"Progman")) {
+    if (wcsstr(classname, L"ForegroundStaging") || wcsstr(classname, L"ApplicationManager_DesktopShellWindow") ||
+        wcsstr(classname, L"Static") || wcsstr(classname, L"Scrollbar") || wcsstr(classname, L"Progman")) {
         return false;
     }
 
@@ -648,99 +641,97 @@ ismanageable(HWND hwnd) {
 }
 
 void
-killclient(const Arg *arg) {
+killclient(const Arg* arg) {
     if (!sel) {
         return;
     }
     PostMessage(sel->hwnd, WM_CLOSE, 0, 0);
 }
 
-Client *manage(HWND hwnd) {
-  Client *c = getclient(hwnd);
+Client*
+manage(HWND hwnd) {
+    Client* c = getclient(hwnd);
 
-  if (c) {
-      return c;
-  }
+    if (c) {
+        return c;
+    }
 
-  debug(L" manage %s\n", getclienttitle(hwnd));
+    debug(L" manage %s\n", getclienttitle(hwnd));
 
-  WINDOWINFO wi = {
-      .cbSize = sizeof(WINDOWINFO),
-  };
+    WINDOWINFO wi = {
+        .cbSize = sizeof(WINDOWINFO),
+    };
 
-  if (!GetWindowInfo(hwnd, &wi)) {
-      return NULL;
-  }
+    if (!GetWindowInfo(hwnd, &wi)) {
+        return NULL;
+    }
 
-  if (!(c = calloc(1, sizeof(Client))))
-    die(L"fatal: could not calloc() %u bytes for new client\n", sizeof(Client));
+    if (!(c = calloc(1, sizeof(Client))))
+        die(L"fatal: could not calloc() %u bytes for new client\n", sizeof(Client));
 
-  c->hwnd = hwnd;
-  c->parent = GetParent(hwnd);
-  c->root = getroot(hwnd);
-  c->isalive = true;
-  c->iscloaked = iscloaked(hwnd);
-  c->isminimized = IsIconic(hwnd);
+    c->hwnd = hwnd;
+    c->parent = GetParent(hwnd);
+    c->root = getroot(hwnd);
+    c->isalive = true;
+    c->iscloaked = iscloaked(hwnd);
+    c->isminimized = IsIconic(hwnd);
 
-  static WINDOWPLACEMENT wp = {
-      .length = sizeof(WINDOWPLACEMENT),
-      .showCmd = SW_RESTORE,
-  };
+    static WINDOWPLACEMENT wp = {
+        .length = sizeof(WINDOWPLACEMENT),
+        .showCmd = SW_RESTORE,
+    };
 
-  if (IsWindowVisible(hwnd) && !c->isminimized) {
-      SetWindowPlacement(hwnd, &wp);
-  }
+    if (IsWindowVisible(hwnd) && !c->isminimized) {
+        SetWindowPlacement(hwnd, &wp);
+    }
 
-  c->isfloating =
-      (!(wi.dwStyle & WS_MINIMIZEBOX) && !(wi.dwStyle & WS_MAXIMIZEBOX));
+    c->isfloating = (!(wi.dwStyle & WS_MINIMIZEBOX) && !(wi.dwStyle & WS_MAXIMIZEBOX));
 
-  c->ignoreborder = iscloaked(hwnd);
+    c->ignoreborder = iscloaked(hwnd);
 
-  debug(L" window style: %d\n", wi.dwStyle);
-  debug(L"     minimize: %d\n", wi.dwStyle & WS_MINIMIZEBOX);
-  debug(L"     maximize: %d\n", wi.dwStyle & WS_MAXIMIZEBOX);
-  debug(L"        popup: %d\n", wi.dwStyle & WS_POPUP);
-  debug(L"   isfloating: %d\n", c->isfloating);
+    debug(L" window style: %d\n", wi.dwStyle);
+    debug(L"     minimize: %d\n", wi.dwStyle & WS_MINIMIZEBOX);
+    debug(L"     maximize: %d\n", wi.dwStyle & WS_MAXIMIZEBOX);
+    debug(L"        popup: %d\n", wi.dwStyle & WS_POPUP);
+    debug(L"   isfloating: %d\n", c->isfloating);
 
-  applyrules(c);
+    applyrules(c);
 
-  if (!c->isfloating) {
-      setborder(c, false);
-  }
+    if (!c->isfloating) {
+        setborder(c, false);
+    }
 
-  if (c->isfloating && IsWindowVisible(hwnd) && !c->isminimized) {
-    debug(L" new floating window: x: %d y: %d w: %d h: %d\n", wi.rcWindow.left,
-          wi.rcWindow.top, wi.rcWindow.right - wi.rcWindow.left,
-          wi.rcWindow.bottom - wi.rcWindow.top);
-    resize(c, wi.rcWindow.left, wi.rcWindow.top,
-           wi.rcWindow.right - wi.rcWindow.left,
-           wi.rcWindow.bottom - wi.rcWindow.top);
-  }
+    if (c->isfloating && IsWindowVisible(hwnd) && !c->isminimized) {
+        debug(L" new floating window: x: %d y: %d w: %d h: %d\n", wi.rcWindow.left, wi.rcWindow.top,
+              wi.rcWindow.right - wi.rcWindow.left, wi.rcWindow.bottom - wi.rcWindow.top);
+        resize(c, wi.rcWindow.left, wi.rcWindow.top, wi.rcWindow.right - wi.rcWindow.left,
+               wi.rcWindow.bottom - wi.rcWindow.top);
+    }
 
-  attach(c);
-  attachstack(c);
-  return c;
+    attach(c);
+    attachstack(c);
+    return c;
 }
 
 void
 monocle(void) {
-    Client *c;
+    Client* c;
 
     for (c = nexttiled(clients); c; c = nexttiled(c->next)) {
         resize(c, wx, wy, ww - 2 * c->bw, wh - 2 * c->bw);
     }
 }
 
-Client *
-nextchild(Client *p, Client *c) {
+Client*
+nextchild(Client* p, Client* c) {
     for (; c && c->parent != p->hwnd; c = c->next) {
         ;
     }
     return c;
 }
 
-Client *
-nexttiled(Client *c) {
+Client*
+nexttiled(Client* c) {
     for (; c && (c->isfloating || c->isminimized || !ISVISIBLE(c)); c = c->next) {
         ;
     }
@@ -748,12 +739,12 @@ nexttiled(Client *c) {
 }
 
 void
-quit(const Arg *arg) {
+quit(const Arg* arg) {
     PostMessage(dwmhwnd, WM_CLOSE, 0, 0);
 }
 
 void
-resize(Client *c, int x, int y, int w, int h) {
+resize(Client* c, int x, int y, int w, int h) {
     if (w <= 0 && h <= 0) {
         setvisibility(c->hwnd, false);
         return;
@@ -788,22 +779,22 @@ resize(Client *c, int x, int y, int w, int h) {
 
 void
 restack(void) {
-
 }
 
-LRESULT CALLBACK barhandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
+LRESULT CALLBACK
+barhandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch (msg) {
         case WM_CREATE:
             updatebar();
             break;
-        case WM_PAINT: {
-            PAINTSTRUCT ps;
-            BeginPaint(hwnd, &ps);
-            drawbar();
-            EndPaint(hwnd, &ps);
-            break;
-        }
+        case WM_PAINT:
+            {
+                PAINTSTRUCT ps;
+                BeginPaint(hwnd, &ps);
+                drawbar();
+                EndPaint(hwnd, &ps);
+                break;
+            }
         case WM_LBUTTONDOWN:
         case WM_RBUTTONDOWN:
         case WM_MBUTTONDOWN:
@@ -812,17 +803,16 @@ LRESULT CALLBACK barhandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_TIMER:
             drawbar();
         default:
-          return DefWindowProc(hwnd, msg, wParam, lParam);
+            return DefWindowProc(hwnd, msg, wParam, lParam);
     }
 
     return 0;
 }
 
-
 int i = 0;
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
+LRESULT CALLBACK
+WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch (msg) {
         case WM_CREATE:
             break;
@@ -834,7 +824,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             break;
         case WM_HOTKEY:
             if (wParam > 0 && wParam < LENGTH(keys)) {
-                keys[wParam].func(&(keys[wParam ].arg));
+                keys[wParam].func(&(keys[wParam].arg));
             }
             break;
         case WM_DISPLAYCHANGE:
@@ -844,7 +834,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             break;
         default:
             if (msg == shellhookid) { /* Handle the shell hook message */
-                Client *c = getclient((HWND)lParam);
+                Client* c = getclient((HWND)lParam);
                 switch (wParam & 0x7fff) {
                     /* The first two events are also trigger if windows
                      * are being hidden or shown because of a tag
@@ -873,7 +863,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     case HSHELL_WINDOWACTIVATED:
                         debug(L" window activated: %s || %d\n", c ? getclienttitle(c->hwnd) : L"unknown", (HWND)lParam);
                         if (c) {
-                            Client *t = sel;
+                            Client* t = sel;
                             managechildwindows(c);
                             setselected(c);
                             /* check if the previously selected
@@ -889,18 +879,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                                 sel->isminimized = false;
                                 zoom(NULL);
                             }
-                        } else  {
-                          /* Some window don't seem to generate
+                        } else {
+                            /* Some window don't seem to generate
                            * HSHELL_WINDOWCREATED messages therefore
                            * we check here whether we should manage
                            * the window or not.
                            */
-                          if (ismanageable((HWND)lParam)) {
-                            c = manage((HWND)lParam);
-                            managechildwindows(c);
-                            setselected(c);
-                            arrange();
-                          }
+                            if (ismanageable((HWND)lParam)) {
+                                c = manage((HWND)lParam);
+                                managechildwindows(c);
+                                setselected(c);
+                                arrange();
+                            }
                         }
                         break;
                 }
@@ -913,55 +903,56 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 void CALLBACK
-wineventproc(HWINEVENTHOOK heventhook, DWORD event, HWND hwnd, LONG object, LONG child, DWORD eventthread, DWORD eventtime_ms) {
+wineventproc(HWINEVENTHOOK heventhook, DWORD event, HWND hwnd, LONG object, LONG child, DWORD eventthread,
+             DWORD eventtime_ms) {
     if (object != OBJID_WINDOW || child != CHILDID_SELF || hwnd == NULL) {
         return;
     }
 
-    Client *c = getclient(hwnd);
+    Client* c = getclient(hwnd);
 
-    switch (event)
-    {
-    case EVENT_OBJECT_UNCLOAKED:
-        if (!c && ismanageable(hwnd)) {
-            c = manage(hwnd);
-            managechildwindows(c);
-            setselected(c);
-            arrange();
-        }
+    switch (event) {
+        case EVENT_OBJECT_UNCLOAKED:
+            if (!c && ismanageable(hwnd)) {
+                c = manage(hwnd);
+                managechildwindows(c);
+                setselected(c);
+                arrange();
+            }
 
-        break;
+            break;
 
-    case EVENT_OBJECT_CLOAKED:
-        if (c) {
-            unmanage(c);
-        }
+        case EVENT_OBJECT_CLOAKED:
+            if (c) {
+                unmanage(c);
+            }
 
-        break;
+            break;
     }
 }
 
-BOOL CALLBACK scan(HWND hwnd, LPARAM lParam) {
-  Client *c = getclient(hwnd);
-  if (c) {
-      c->isalive = true;
-  } else if (ismanageable(hwnd)) {
-      manage(hwnd);
-  }
+BOOL CALLBACK
+scan(HWND hwnd, LPARAM lParam) {
+    Client* c = getclient(hwnd);
+    if (c) {
+        c->isalive = true;
+    } else if (ismanageable(hwnd)) {
+        manage(hwnd);
+    }
 
-  return TRUE;
+    return TRUE;
 }
 
 void
-drawborder(Client *c, COLORREF color) {
+drawborder(Client* c, COLORREF color) {
 #if 0
     HDC hdc = GetWindowDC(c->hwnd);
 
-#if 0
+#    if 0
     /* this would be another way, but it uses standard sytem colors */
     RECT area = { .left = 0, .top = 0, .right = c->w, .bottom = c->h };
     DrawEdge(hdc, &area, BDR_RAISEDOUTER | BDR_SUNKENINNER, BF_RECT);
-#else
+#    else
     HPEN pen = CreatePen(PS_SOLID, borderpx, color);
     SelectObject(hdc, pen);
     MoveToEx(hdc, 0, 0, NULL);
@@ -970,42 +961,42 @@ drawborder(Client *c, COLORREF color) {
     LineTo(hdc, 0, c->h);
     LineTo(hdc, 0, 0);
     DeleteObject(pen);
-#endif
+#    endif
 
     ReleaseDC(c->hwnd, hdc);
 #endif
 }
 
 void
-setborder(Client *c, bool border) {
+setborder(Client* c, bool border) {
     if (!c->ignoreborder) {
         if (border) {
             SetWindowLong(c->hwnd, GWL_STYLE, (GetWindowLong(c->hwnd, GWL_STYLE) | (WS_CAPTION | WS_SIZEBOX)));
         } else {
-          /* XXX: ideally i would like to use the standard window border
+            /* XXX: ideally i would like to use the standard window border
            * facilities and just modify the color with SetSysColor but this only
            * seems to work if we leave WS_SIZEBOX enabled which is not optimal.
            */
-          SetWindowLong(
-              c->hwnd, GWL_STYLE,
-              (GetWindowLong(c->hwnd, GWL_STYLE) & ~(WS_CAPTION | WS_SIZEBOX)) |
-                  WS_BORDER | WS_THICKFRAME);
-          SetWindowLong(c->hwnd, GWL_EXSTYLE,
-                        (GetWindowLong(c->hwnd, GWL_EXSTYLE) &
-                         ~(WS_EX_CLIENTEDGE | WS_EX_WINDOWEDGE)));
+            SetWindowLong(c->hwnd, GWL_STYLE,
+                          (GetWindowLong(c->hwnd, GWL_STYLE) & ~(WS_CAPTION | WS_SIZEBOX)) | WS_BORDER | WS_THICKFRAME);
+            SetWindowLong(c->hwnd, GWL_EXSTYLE,
+                          (GetWindowLong(c->hwnd, GWL_EXSTYLE) & ~(WS_EX_CLIENTEDGE | WS_EX_WINDOWEDGE)));
         }
-        SetWindowPos(c->hwnd, 0, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER );
+        SetWindowPos(c->hwnd, 0, 0, 0, 0, 0,
+                     SWP_FRAMECHANGED | SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
         c->border = border;
     }
 }
 
 void
 setvisibility(HWND hwnd, bool visibility) {
-    SetWindowPos(hwnd, 0, 0, 0, 0, 0, (visibility ? SWP_SHOWWINDOW : SWP_HIDEWINDOW) | SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
+    SetWindowPos(hwnd, 0, 0, 0, 0, 0,
+                 (visibility ? SWP_SHOWWINDOW : SWP_HIDEWINDOW) | SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE |
+                     SWP_NOZORDER);
 }
 
 void
-setlayout(const Arg *arg) {
+setlayout(const Arg* arg) {
     if (!arg || !arg->v || arg->v != lt[sellt]) {
         sellt ^= 1;
     }
@@ -1021,7 +1012,7 @@ setlayout(const Arg *arg) {
 
 /* arg > 1.0 will set mfact absolutly */
 void
-setmfact(const Arg *arg) {
+setmfact(const Arg* arg) {
     float f;
 
     if (!arg || !lt[sellt]->arrange) {
@@ -1036,56 +1027,59 @@ setmfact(const Arg *arg) {
 }
 
 int
-luaopen_dwmlibs(lua_State *L, DwmState* state) {
-	luaL_openlibs(L);
+luaopen_dwmlibs(lua_State* L, DwmState* state) {
+    luaL_openlibs(L);
 
 #ifndef LUAJIT
-	luaopen_bit(L);
+    luaopen_bit(L);
 #endif
 
-	luaL_requiref(L, "dwm", luaopen_dwm, 0);
-	dwm_setstate(L, state);
-	luaL_requiref(L, "dwm.eventemitter", luaopen_dwm_eventemitter, 0);
-	luaL_requiref(L, "dwm.display", luaopen_dwm_display, 0);
-	luaL_requiref(L, "dwm.client", luaopen_dwm_client, 0);
-	luaL_requiref(L, "dwm.hotkey", luaopen_dwm_hotkey, 0);
+    luaL_requiref(L, "dwm", luaopen_dwm, 0);
+    dwm_setstate(L, state);
+    luaL_requiref(L, "dwm.eventemitter", luaopen_dwm_eventemitter, 0);
+    luaL_requiref(L, "dwm.display", luaopen_dwm_display, 0);
+    luaL_requiref(L, "dwm.client", luaopen_dwm_client, 0);
+    luaL_requiref(L, "dwm.hotkey", luaopen_dwm_hotkey, 0);
 
-	return 1;
-}
-
-void load_user_script(lua_State *L) {
-	(void) luaL_dostring(L,
-		"local dwm = require 'dwm'\n"
-		"local dwm_config_dir = (os.getenv('XDG_CONFIG_HOME') or os.getenv('HOME') or os.getenv('USERPROFILE')) .. '/.config/dwm'\n"
-		"local init_script = dwm_config_dir .. '/init.lua'\n"
-		"local f = io.open(init_script, 'r')\n"
-		"if f then\n"
-		"  f:close()\n"
-		"  dofile(init_script)\n"
-		"end\n"
-		"\n");
-}
-
-static int lua_panic_handler(lua_State *L) {
-	void *ud = NULL;
-	lua_getallocf(L, &ud);
-	if (ud) {
-		const char *msg = NULL;
-    if (lua_type(L, -1) == LUA_TSTRING) {
-        msg = lua_tostring(L, -1);
-    }
-        die(msg);
-	}
-	return 0;
+    return 1;
 }
 
 void
-setup(lua_State *L, HINSTANCE hInstance) {
-	lua_atpanic(L, &lua_panic_handler);
-	DwmState *state = (DwmState*)malloc(sizeof(DwmState));
-	state->hInstance = hInstance;
-	luaopen_dwmlibs(L, state);
-	load_user_script(L);
+load_user_script(lua_State* L) {
+    (void)luaL_dostring(L,
+                        "local dwm = require 'dwm'\n"
+                        "local dwm_config_dir = (os.getenv('XDG_CONFIG_HOME') or os.getenv('HOME') or "
+                        "os.getenv('USERPROFILE')) .. '/.config/dwm'\n"
+                        "local init_script = dwm_config_dir .. '/init.lua'\n"
+                        "local f = io.open(init_script, 'r')\n"
+                        "if f then\n"
+                        "  f:close()\n"
+                        "  dofile(init_script)\n"
+                        "end\n"
+                        "\n");
+}
+
+static int
+lua_panic_handler(lua_State* L) {
+    void* ud = NULL;
+    lua_getallocf(L, &ud);
+    if (ud) {
+        const char* msg = NULL;
+        if (lua_type(L, -1) == LUA_TSTRING) {
+            msg = lua_tostring(L, -1);
+        }
+        die(msg);
+    }
+    return 0;
+}
+
+void
+setup(lua_State* L, HINSTANCE hInstance) {
+    lua_atpanic(L, &lua_panic_handler);
+    DwmState* state = (DwmState*)malloc(sizeof(DwmState));
+    state->hInstance = hInstance;
+    luaopen_dwmlibs(L, state);
+    load_user_script(L);
 
     unsigned int i;
 
@@ -1152,7 +1146,8 @@ setup(lua_State *L, HINSTANCE hInstance) {
     /* Grab a dynamic id for the SHELLHOOK message to be used later */
     shellhookid = RegisterWindowMessageW(L"SHELLHOOK");
 
-    wineventhook = SetWinEventHook(EVENT_OBJECT_CLOAKED, EVENT_OBJECT_UNCLOAKED, NULL, wineventproc, 0, 0, WINEVENT_OUTOFCONTEXT);
+    wineventhook =
+        SetWinEventHook(EVENT_OBJECT_CLOAKED, EVENT_OBJECT_UNCLOAKED, NULL, wineventproc, 0, 0, WINEVENT_OUTOFCONTEXT);
 
     if (!wineventhook)
         die(L"Could not SetWinEventHook");
@@ -1184,12 +1179,10 @@ setupbar(HINSTANCE hInstance) {
     if (!RegisterClassW(&winClass))
         die(L"Error registering window class");
 
-    barhwnd =
-        CreateWindowExW(WS_EX_TOOLWINDOW, L"dwm-bar", NULL, /* window title */
-                        WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, 0, 0, 0,
-                        0, NULL, /* parent window */
-                        NULL,    /* menu */
-                        hInstance, NULL);
+    barhwnd = CreateWindowExW(WS_EX_TOOLWINDOW, L"dwm-bar", NULL,                             /* window title */
+                              WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, 0, 0, 0, 0, NULL, /* parent window */
+                              NULL,                                                           /* menu */
+                              hInstance, NULL);
 
     /* calculate width of the largest layout symbol */
     dc.hdc = GetWindowDC(barhwnd);
@@ -1197,7 +1190,7 @@ setupbar(HINSTANCE hInstance) {
     SelectObject(dc.hdc, font);
 
     for (blw = i = 0; LENGTH(layouts) > 1 && i < LENGTH(layouts); i++) {
-         w = TEXTW(layouts[i].symbol);
+        w = TEXTW(layouts[i].symbol);
         blw = MAX(blw, w);
     }
 
@@ -1211,15 +1204,16 @@ setupbar(HINSTANCE hInstance) {
 }
 
 void
-showclientinfo(const Arg *arg) {
+showclientinfo(const Arg* arg) {
     HWND hwnd = GetForegroundWindow();
     wchar_t buffer[5000];
-    swprintf(buffer, sizeof(buffer), L"ClassName:  %s\nTitle:  %s\nProcessName: %s", getclientclassname(hwnd), getclienttitle(hwnd), getclientprocessname(hwnd));
+    swprintf(buffer, sizeof(buffer), L"ClassName:  %s\nTitle:  %s\nProcessName: %s", getclientclassname(hwnd),
+             getclienttitle(hwnd), getclientprocessname(hwnd));
     MessageBoxW(NULL, buffer, L"dwm-win32 debug", MB_OK);
 }
 
 void
-showhide(Client *c) {
+showhide(Client* c) {
     if (!c) {
         return;
     }
@@ -1239,19 +1233,20 @@ showhide(Client *c) {
 }
 
 void
-spawn(const Arg *arg) {
-    ShellExecuteW(NULL, NULL, ((wchar_t **)arg->v)[0], ((wchar_t **)arg->v)[1], NULL, SW_SHOWDEFAULT);
+spawn(const Arg* arg) {
+    ShellExecuteW(NULL, NULL, ((wchar_t**)arg->v)[0], ((wchar_t**)arg->v)[1], NULL, SW_SHOWDEFAULT);
 }
 
 void
-tag(const Arg *arg) {
-    Client *c;
+tag(const Arg* arg) {
+    Client* c;
 
     if (sel && arg->ui & TAGMASK) {
         sel->tags = arg->ui & TAGMASK;
         debug(L"window tagged: %d %s\n", sel->hwnd, getclienttitle(sel->hwnd));
         for (c = managechildwindows(sel); c; c = nextchild(sel, c->next)) {
-            debug(L" child window which is %s tagged: %s\n", c->isfloating ? L"floating" : L"normal", getclienttitle(c->hwnd));
+            debug(L" child window which is %s tagged: %s\n", c->isfloating ? L"floating" : L"normal",
+                  getclienttitle(c->hwnd));
             if (c->isfloating) {
                 c->tags = arg->ui & TAGMASK;
             }
@@ -1262,7 +1257,7 @@ tag(const Arg *arg) {
 }
 
 int
-textnw(const wchar_t *text, unsigned int len) {
+textnw(const wchar_t* text, unsigned int len) {
     SIZE size;
     GetTextExtentPoint32W(dc.hdc, text, len, &size);
     if (size.cx > 0) {
@@ -1271,12 +1266,11 @@ textnw(const wchar_t *text, unsigned int len) {
     return size.cx;
 }
 
-
 void
 tile(void) {
     int x, y, h, w, mw;
     unsigned int i, n;
-    Client *c;
+    Client* c;
 
     for (n = 0, c = nexttiled(clients); c; c = nexttiled(c->next), n++) {
         ;
@@ -1304,8 +1298,7 @@ tile(void) {
     }
 
     for (i = 0, c = nexttiled(c->next); c; c = nexttiled(c->next), i++) {
-        resize(c, x, y, w - 2 * c->bw, /* remainder */ ((i + 1 == n)
-               ? wy + wh - y - 2 * c->bw : h - 2 * c->bw));
+        resize(c, x, y, w - 2 * c->bw, /* remainder */ ((i + 1 == n) ? wy + wh - y - 2 * c->bw : h - 2 * c->bw));
         if (h != wh) {
             y = c->y + HEIGHT(c);
         }
@@ -1313,7 +1306,7 @@ tile(void) {
 }
 
 void
-togglebar(const Arg *arg) {
+togglebar(const Arg* arg) {
     showbar = !showbar;
     updategeom();
     updatebar();
@@ -1321,7 +1314,7 @@ togglebar(const Arg *arg) {
 }
 
 void
-toggleborder(const Arg *arg) {
+toggleborder(const Arg* arg) {
     if (!sel) {
         return;
     }
@@ -1329,7 +1322,7 @@ toggleborder(const Arg *arg) {
 }
 
 void
-toggleexplorer(const Arg *arg) {
+toggleexplorer(const Arg* arg) {
     HWND hwnd = FindWindowW(L"Progman", L"Program Manager");
     if (hwnd) {
         setvisibility(hwnd, !IsWindowVisible(hwnd));
@@ -1345,9 +1338,8 @@ toggleexplorer(const Arg *arg) {
     arrange();
 }
 
-
 void
-togglefloating(const Arg *arg) {
+togglefloating(const Arg* arg) {
     if (!sel) {
         return;
     }
@@ -1360,7 +1352,7 @@ togglefloating(const Arg *arg) {
 }
 
 void
-toggletag(const Arg *arg) {
+toggletag(const Arg* arg) {
     unsigned int mask;
 
     if (!sel) {
@@ -1375,7 +1367,7 @@ toggletag(const Arg *arg) {
 }
 
 void
-toggleview(const Arg *arg) {
+toggleview(const Arg* arg) {
     unsigned int mask = tagset[seltags] ^ (arg->ui & TAGMASK);
 
     if (mask) {
@@ -1385,9 +1377,9 @@ toggleview(const Arg *arg) {
 }
 
 void
-writelog(const Arg *arg) {
-    Client *c;
-    FILE *fout;
+writelog(const Arg* arg) {
+    Client* c;
+    FILE* fout;
     fout = fopen("dwm-win32.log", "w");
     if (fout == NULL) {
         return;
@@ -1410,7 +1402,7 @@ writelog(const Arg *arg) {
 }
 
 void
-unmanage(Client *c) {
+unmanage(Client* c) {
     debug(L" unmanage %s\n", getclienttitle(c->hwnd));
     if (c->wasvisible) {
         setvisibility(c->hwnd, true);
@@ -1429,7 +1421,8 @@ unmanage(Client *c) {
 
 void
 updatebar(void) {
-    SetWindowPos(barhwnd, showbar ? HWND_TOPMOST : HWND_NOTOPMOST, bx, by, ww, bh, (showbar ? SWP_SHOWWINDOW : SWP_HIDEWINDOW) | SWP_NOACTIVATE | SWP_NOSENDCHANGING);
+    SetWindowPos(barhwnd, showbar ? HWND_TOPMOST : HWND_NOTOPMOST, bx, by, ww, bh,
+                 (showbar ? SWP_SHOWWINDOW : SWP_HIDEWINDOW) | SWP_NOACTIVATE | SWP_NOSENDCHANGING);
 }
 
 void
@@ -1440,16 +1433,16 @@ updategeom(void) {
      * the workspace accordingly.
      */
     if (hwnd && IsWindowVisible(hwnd)) {
-      SystemParametersInfo(SPI_GETWORKAREA, 0, &wa, 0);
-      sx = wa.left;
-      sy = wa.top;
-      sw = wa.right - wa.left;
-      sh = wa.bottom - wa.top;
+        SystemParametersInfo(SPI_GETWORKAREA, 0, &wa, 0);
+        sx = wa.left;
+        sy = wa.top;
+        sw = wa.right - wa.left;
+        sh = wa.bottom - wa.top;
     } else {
-      sx = GetSystemMetrics(SM_XVIRTUALSCREEN);
-      sy = GetSystemMetrics(SM_YVIRTUALSCREEN);
-      sw = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-      sh = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+        sx = GetSystemMetrics(SM_XVIRTUALSCREEN);
+        sy = GetSystemMetrics(SM_YVIRTUALSCREEN);
+        sw = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+        sh = GetSystemMetrics(SM_CYVIRTUALSCREEN);
     }
 
     bx = sx;
@@ -1466,7 +1459,7 @@ updategeom(void) {
 }
 
 void
-view(const Arg *arg) {
+view(const Arg* arg) {
     if ((arg->ui & TAGMASK) == tagset[seltags]) {
         return;
     }
@@ -1478,8 +1471,8 @@ view(const Arg *arg) {
 }
 
 void
-zoom(const Arg *arg) {
-    Client *c = sel;
+zoom(const Arg* arg) {
+    Client* c = sel;
 
     if (!lt[sellt]->arrange || lt[sellt]->arrange == monocle || (sel && sel->isfloating)) {
         return;
@@ -1496,72 +1489,71 @@ zoom(const Arg *arg) {
 }
 
 void
-movestack(const Arg *arg) {
-	Client *c = NULL, *p = NULL, *pc = NULL, *i;
+movestack(const Arg* arg) {
+    Client *c = NULL, *p = NULL, *pc = NULL, *i;
 
-	if(arg->i > 0) {
-		/* find the client after selmon->sel */
-    for (c = sel->next; c && (!ISVISIBLE(c) || c->isfloating); c = c->next) {
-        ;
-    }
-    if (!c) {
-        for (c = clients; c && (!ISVISIBLE(c) || c->isfloating); c = c->next) {
+    if (arg->i > 0) {
+        /* find the client after selmon->sel */
+        for (c = sel->next; c && (!ISVISIBLE(c) || c->isfloating); c = c->next) {
             ;
         }
-    }
-
-  }
-	else {
-		/* find the client before sel */
-    for (i = clients; i != sel; i = i->next) {
-        if (ISVISIBLE(i) && !i->isfloating) {
-            c = i;
+        if (!c) {
+            for (c = clients; c && (!ISVISIBLE(c) || c->isfloating); c = c->next) {
+                ;
+            }
         }
-    }
-    if (!c) {
-        for (; i; i = i->next) {
+
+    } else {
+        /* find the client before sel */
+        for (i = clients; i != sel; i = i->next) {
             if (ISVISIBLE(i) && !i->isfloating) {
                 c = i;
             }
         }
+        if (!c) {
+            for (; i; i = i->next) {
+                if (ISVISIBLE(i) && !i->isfloating) {
+                    c = i;
+                }
+            }
+        }
     }
-  }
-	/* find the client before sel and c */
-	for(i = clients; i && (!p || !pc); i = i->next) {
-      if (i->next == sel) {
-          p = i;
-      }
-      if (i->next == c) {
-          pc = i;
-      }
-  }
-
-	/* swap c and sel clients in the clients list */
-	if(c && c != sel) {
-		Client *temp = sel->next==c?sel:sel->next;
-		sel->next = c->next==sel?c:c->next;
-		c->next = temp;
-
-    if (p && p != c) {
-        p->next = c;
-    }
-    if (pc && pc != sel) {
-        pc->next = sel;
+    /* find the client before sel and c */
+    for (i = clients; i && (!p || !pc); i = i->next) {
+        if (i->next == sel) {
+            p = i;
+        }
+        if (i->next == c) {
+            pc = i;
+        }
     }
 
-    if (sel == clients) {
-        clients = c;
-    } else if (c == clients) {
-        clients = sel;
-    }
+    /* swap c and sel clients in the clients list */
+    if (c && c != sel) {
+        Client* temp = sel->next == c ? sel : sel->next;
+        sel->next = c->next == sel ? c : c->next;
+        c->next = temp;
 
-    arrange();
-	}
+        if (p && p != c) {
+            p->next = c;
+        }
+        if (pc && pc != sel) {
+            pc->next = sel;
+        }
+
+        if (sel == clients) {
+            clients = c;
+        } else if (c == clients) {
+            clients = sel;
+        }
+
+        arrange();
+    }
 }
 
 void
-forcearrange(const Arg *arg) {
-    Client *c;
+forcearrange(const Arg* arg) {
+    Client* c;
     for (c = clients; c; c = c->next) {
         c->x = 0;
         c->y = 0;
@@ -1571,9 +1563,9 @@ forcearrange(const Arg *arg) {
     arrange();
 }
 
-
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd) {
-	SetProcessDPIAware();
+int WINAPI
+wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd) {
+    SetProcessDPIAware();
 
     MSG msg;
 
@@ -1583,7 +1575,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     if (GetLastError() == ERROR_ALREADY_EXISTS)
         die(L"dwm-win32 already running");
 
-	lua_State *L = luaL_newstate();
+    lua_State* L = luaL_newstate();
     setup(L, hInstance);
 
     while (GetMessage(&msg, NULL, 0, 0) > 0) {

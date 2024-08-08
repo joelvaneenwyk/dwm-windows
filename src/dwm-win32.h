@@ -20,10 +20,10 @@
 #define _WIN32_WINNT 0x0600
 
 #if _MSC_VER
-#pragma comment(lib, "gdi32.lib")
-#pragma comment(lib, "shell32.lib")
-#pragma comment(lib, "user32.lib")
-#pragma comment(lib, "dwmapi.lib")
+#    pragma comment(lib, "gdi32.lib")
+#    pragma comment(lib, "shell32.lib")
+#    pragma comment(lib, "user32.lib")
+#    pragma comment(lib, "dwmapi.lib")
 #endif
 
 #include <lua.h>
@@ -36,19 +36,17 @@
 #include <compat-5.3.h>
 
 typedef struct lua_State lua_State;
-typedef int (*lua_CFunction)(lua_State *L);
+typedef int (*lua_CFunction)(lua_State* L);
 
-extern void lua_close(lua_State *L);
-extern lua_CFunction lua_atpanic(lua_State *L, lua_CFunction panicf);
-extern void luaL_openlibs(lua_State *L);
-extern int luaopen_bit(lua_State *L);
+extern void lua_close(lua_State* L);
+extern lua_CFunction lua_atpanic(lua_State* L, lua_CFunction panicf);
+extern void luaL_openlibs(lua_State* L);
+extern int luaopen_bit(lua_State* L);
 
-extern void luaL_requiref(lua_State *L, const char *modname,
-                          lua_CFunction openf, int glb);
+extern void luaL_requiref(lua_State* L, const char* modname, lua_CFunction openf, int glb);
 
-extern lua_State *luaL_newstate(void);
-#define luaL_dostring(L, s)                                                    \
-  (luaL_loadstring(L, s) || lua_pcall(L, 0, LUA_MULTRET, 0))
+extern lua_State* luaL_newstate(void);
+#define luaL_dostring(L, s) (luaL_loadstring(L, s) || lua_pcall(L, 0, LUA_MULTRET, 0))
 
 #include <dwmapi.h>
 #include <shellapi.h>
@@ -63,8 +61,7 @@ extern lua_State *luaL_newstate(void);
 #define NAME L"dwm-win32" /* Used for window name/class */
 
 #define ISVISIBLE(x) ((x)->tags & tagset[seltags])
-#define ISFOCUSABLE(x)                                                         \
-  (!(x)->isminimized && ISVISIBLE(x) && IsWindowVisible((x)->hwnd))
+#define ISFOCUSABLE(x) (!(x)->isminimized && ISVISIBLE(x) && IsWindowVisible((x)->hwnd))
 #define LENGTH(x) (sizeof x / sizeof x[0])
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -75,20 +72,20 @@ extern lua_State *luaL_newstate(void);
 #define TEXTW(x) (textnw(x, wcslen(x)))
 
 #ifdef NDEBUG
-#define debug(...)                                                             \
-  do {                                                                         \
-  } while (false)
+#    define debug(...)                                                                                                 \
+        do {                                                                                                           \
+        } while (false)
 #else
-#define debug(...) eprint(false, __VA_ARGS__)
+#    define debug(...) eprint(false, __VA_ARGS__)
 #endif
 
-#define die(...)                                                               \
-  if (TRUE) {                                                                  \
-    eprint(true, __VA_ARGS__);                                                 \
-    eprint(true, L"Win32 Last Error: %d", GetLastError());                     \
-    cleanup(NULL);                                                             \
-    exit(EXIT_FAILURE);                                                        \
-  }
+#define die(...)                                                                                                       \
+    if (TRUE) {                                                                                                        \
+        eprint(true, __VA_ARGS__);                                                                                     \
+        eprint(true, L"Win32 Last Error: %d", GetLastError());                                                         \
+        cleanup(NULL);                                                                                                 \
+        exit(EXIT_FAILURE);                                                                                            \
+    }
 
 #define EVENT_OBJECT_CLOAKED 0x8017
 #define EVENT_OBJECT_UNCLOAKED 0x8018
@@ -98,67 +95,67 @@ enum { ColBorder, ColFG, ColBG, ColLast };                   /* color */
 enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle }; /* clicks */
 
 typedef struct {
-  int x, y, w, h;
-  unsigned long norm[ColLast];
-  unsigned long sel[ColLast];
-  HDC hdc;
+        int x, y, w, h;
+        unsigned long norm[ColLast];
+        unsigned long sel[ColLast];
+        HDC hdc;
 } DC; /* draw context */
 
 typedef union {
-  int i;
-  unsigned int ui;
-  float f;
-  void *v;
+        int i;
+        unsigned int ui;
+        float f;
+        void* v;
 } Arg;
 
 typedef struct {
-  unsigned int click;
-  unsigned int button;
-  unsigned int key;
-  void (*func)(const Arg *arg);
-  const Arg arg;
+        unsigned int click;
+        unsigned int button;
+        unsigned int key;
+        void (*func)(const Arg* arg);
+        const Arg arg;
 } Button;
 
 typedef struct Client Client;
 struct Client {
-  HWND hwnd;
-  HWND parent;
-  HWND root;
-  int x, y, w, h;
-  int bw; // XXX: useless?
-  unsigned int tags;
-  bool isminimized;
-  bool isfloating;
-  bool isalive;
-  bool ignore;
-  bool ignoreborder;
-  bool border;
-  bool wasvisible;
-  bool isfixed, isurgent; // XXX: useless?
-  bool iscloaked;         // WinStore apps
-  Client *next;
-  Client *snext;
+        HWND hwnd;
+        HWND parent;
+        HWND root;
+        int x, y, w, h;
+        int bw;    // XXX: useless?
+        unsigned int tags;
+        bool isminimized;
+        bool isfloating;
+        bool isalive;
+        bool ignore;
+        bool ignoreborder;
+        bool border;
+        bool wasvisible;
+        bool isfixed, isurgent;    // XXX: useless?
+        bool iscloaked;            // WinStore apps
+        Client* next;
+        Client* snext;
 };
 
 typedef struct {
-  unsigned int mod;
-  unsigned int key;
-  void (*func)(const Arg *);
-  const Arg arg;
+        unsigned int mod;
+        unsigned int key;
+        void (*func)(const Arg*);
+        const Arg arg;
 } Key;
 
 typedef struct {
-  const wchar_t *symbol;
-  void (*arrange)(void);
+        const wchar_t* symbol;
+        void (*arrange)(void);
 } Layout;
 
 typedef struct {
-  const wchar_t *class;
-  const wchar_t *title;
-  const wchar_t *processname;
-  unsigned int tags;
-  bool isfloating;
-  bool ignoreborder;
+        const wchar_t* class;
+        const wchar_t* title;
+        const wchar_t* processname;
+        unsigned int tags;
+        bool isfloating;
+        bool ignoreborder;
 } Rule;
 
 /* function declarations */
@@ -177,9 +174,9 @@ extern void drawborder(Client* c, COLORREF color);
 extern void eprint(bool premortem, const wchar_t* errstr, ...);
 extern void focus(Client* c);
 extern void focusstack(const Arg* arg);
-extern void movestack(const Arg *arg);
-extern void forcearrange(const Arg *arg);
-extern Client *getclient(HWND hwnd);
+extern void movestack(const Arg* arg);
+extern void forcearrange(const Arg* arg);
+extern Client* getclient(HWND hwnd);
 extern LPWSTR getclientclassname(HWND hwnd);
 extern LPWSTR getclienttitle(HWND hwnd);
 extern LPWSTR getclientprocessname(HWND hwnd);
@@ -188,10 +185,10 @@ extern void grabkeys(HWND hwnd);
 extern void killclient(const Arg* arg);
 extern Client* manage(HWND hwnd);
 extern void monocle(void);
-extern Client *nextchild(Client *p, Client *c);
-extern Client *nexttiled(Client *c);
+extern Client* nextchild(Client* p, Client* c);
+extern Client* nexttiled(Client* c);
 extern void quit(const Arg* arg);
-extern void resize(Client *c, int x, int y, int w, int h);
+extern void resize(Client* c, int x, int y, int w, int h);
 extern void restack(void);
 extern BOOL CALLBACK scan(HWND hwnd, LPARAM lParam);
 extern void setborder(Client* c, bool border);

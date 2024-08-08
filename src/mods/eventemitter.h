@@ -3,6 +3,6 @@
 
 #include "dwm-win32.h"
 
-int luaopen_dwm_eventemitter(lua_State *L);
+int luaopen_dwm_eventemitter(lua_State* L);
 
 #endif
