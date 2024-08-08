@@ -28,3 +28,5 @@ bin/
 
 dwm-win32.log
 /*.txt
+
+.task/

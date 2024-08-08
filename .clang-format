@@ -4,40 +4,47 @@
 Language: Cpp
 BasedOnStyle: LLVM
 
+Standard: c++17
+
 AlignAfterOpenBracket: Align
-AlignEscapedNewlines: DontAlign
-AllowAllParametersOfDeclarationOnNextLine: false
-AllowShortFunctionsOnASingleLine: Inline
+AlignEscapedNewlines: Right
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: All
 AllowShortLoopsOnASingleLine: false
-AlwaysBreakAfterReturnType: TopLevelDefinitions
-AlwaysBreakTemplateDeclarations: Yes
-BinPackArguments: false
-BinPackParameters: false
-BreakBeforeBraces: Stroustrup
+BinPackArguments: true
+BinPackParameters: true
+Cpp11BracedListStyle: true
+FixNamespaceComments: true
+
+AlwaysBreakBeforeMultilineStrings: true
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeComma
+AlwaysBreakAfterReturnType: TopLevelDefinitions
+AlwaysBreakTemplateDeclarations: Yes
+
 ColumnLimit: 120
-Cpp11BracedListStyle: false
-FixNamespaceComments: true
 IncludeBlocks: Regroup
-IndentWidth: 2
-TabWidth: 2
+MaxEmptyLinesToKeep: 1
+SpacesBeforeTrailingComments: 4
+
 UseTab: Never
+TabWidth: 2
+IndentWidth: 4
 IndentAccessModifiers: true
 IndentCaseBlocks: true
 IndentCaseLabels: true
 IndentPPDirectives: AfterHash
-MaxEmptyLinesToKeep: 1
+
+SpacesInAngles: Always
+SpaceAfterCStyleCast: false
+SpaceInEmptyBlock: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+
 NamespaceIndentation: None
 PointerAlignment: Left
 ReflowComments: false
 SortIncludes: CaseInsensitive
-SpaceAfterCStyleCast: false
-SpaceInEmptyBlock: false
-SpacesBeforeTrailingComments: 2
-SpacesInAngles: Always
-SpacesInParentheses: false
-SpacesInSquareBrackets: true
-Standard: c++17
