@@ -28,6 +28,7 @@ bin/
 
 dwm-win32.log
 /*.txt
+!/CMakeLists.txt
 
 .task/
 .cmake/

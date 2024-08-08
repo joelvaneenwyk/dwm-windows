@@ -1,0 +1,78 @@
+cmake_minimum_required(VERSION 3.29)
+project(dwm_windows)
+
+enable_language(C)
+set(CMAKE_CXX_STANDARD 14)
+
+include_directories(extern/lua/etc)
+include_directories(extern/lua/src)
+include_directories(extern/lua-compat-5.3)
+include_directories(extern/luajit/dynasm)
+include_directories(extern/luajit/src)
+include_directories(extern/luajit/src/host)
+include_directories(extern/sdl2/include)
+include_directories(extern/sdl2/src)
+include_directories(extern/sdl2/test)
+include_directories(extern/sdl2/Xcode-iOS/Demos/src)
+include_directories(src)
+
+set(SOURCE_FILES
+        extern/luabitop/bit.c
+        extern/lua/src/lapi.c
+        extern/lua/src/lauxlib.c
+        extern/lua/src/lbaselib.c
+        extern/lua/src/lcode.c
+        extern/lua/src/ldblib.c
+        extern/lua/src/ldebug.c
+        extern/lua/src/ldo.c
+        extern/lua/src/ldump.c
+        extern/lua/src/lfunc.c
+        extern/lua/src/lgc.c
+        extern/lua/src/linit.c
+        extern/lua/src/liolib.c
+        extern/lua/src/llex.c
+        extern/lua/src/lmathlib.c
+        extern/lua/src/lmem.c
+        extern/lua/src/loadlib.c
+        extern/lua/src/lobject.c
+        extern/lua/src/lopcodes.c
+        extern/lua/src/loslib.c
+        extern/lua/src/lparser.c
+        extern/lua/src/lstate.c
+        extern/lua/src/lstring.c
+        extern/lua/src/lstrlib.c
+        extern/lua/src/ltable.c
+        extern/lua/src/ltablib.c
+        extern/lua/src/ltm.c
+        extern/lua/src/luac.c
+        extern/lua/src/lundump.c
+        extern/lua/src/lvm.c
+        extern/lua/src/lzio.c
+        extern/lua/src/print.c
+        src/bstack.c
+        src/dwm-win32.c
+        src/fibonacci.c
+        src/gaplessgrid.c
+        src/grid.c
+        src/mods/client.c
+        src/mods/display.c
+        src/mods/dwm.c
+        src/mods/eventemitter.c
+        src/mods/hotkey.c
+        src/win32_utf8.c
+)
+add_executable(dwm_windows
+        ${SOURCE_FILES}
+        .clang-format
+        .clang-tidy
+        .clangd
+        .editorconfig
+        .gitattributes
+        .gitignore
+        cspell.config.yaml
+        LICENSE
+        README.md
+        renovate.json
+        screenshot.png
+        taskfile.yaml
+)
