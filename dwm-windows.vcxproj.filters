@@ -1,260 +1,275 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
+    <Filter Include="extern">
+      <UniqueIdentifier>{4d18a274-964f-45d5-9f0a-8c327c4e934e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="src\mods">
+      <UniqueIdentifier>{24394314-4083-4abb-82d8-49432f4b1864}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
+    <Filter Include="resources">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="inc">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="extern\lua">
+      <UniqueIdentifier>{5c7e93f5-457d-4c76-93a8-9945eb999948}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="extern\lua\inc">
+      <UniqueIdentifier>{0fc131f1-8940-43be-a8fc-14b2dedf09cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="extern\lua\src">
+      <UniqueIdentifier>{a83c0c57-961d-4b98-8102-49168c855daa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="extern\lua\src\lapi.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\lauxlib.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\lbaselib.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\lcode.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\ldblib.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\ldebug.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\ldo.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\ldump.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\lfunc.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\lgc.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\linit.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\liolib.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\llex.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\lmathlib.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\lmem.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\loadlib.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\lobject.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\lopcodes.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\loslib.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\lparser.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\lstate.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\lstring.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\lstrlib.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\ltable.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\ltablib.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\ltm.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\luac.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\lundump.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\lvm.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\lzio.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\lua\src\print.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern\luabitop\bit.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\bstack.c">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\dwm-win32.c">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\fibonacci.c">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\gaplessgrid.c">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\grid.c">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\win32_utf8.c">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\mods\client.c">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\mods\display.c">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\mods\dwm.c">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\mods\eventemitter.c">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\mods\hotkey.c">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\luabitop\bit.c">
+      <Filter>src\mods</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lapi.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lauxlib.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lbaselib.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lcode.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\ldblib.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\ldebug.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\ldo.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\ldump.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lfunc.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lgc.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\linit.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\liolib.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\llex.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lmathlib.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lmem.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\loadlib.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lobject.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lopcodes.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\loslib.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lparser.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lstate.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lstring.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lstrlib.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\ltable.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\ltablib.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\ltm.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\luac.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lundump.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lvm.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\lzio.c">
+      <Filter>extern\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\lua\src\print.c">
+      <Filter>extern\lua\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="extern\sdl2\android-project\.gradle\4.10.2\filechanges\last-build.bin">
-      <Filter>Resource Files</Filter>
+      <Filter>resources</Filter>
     </None>
     <None Include="extern\sdl2\android-project\.gradle\4.10.2\filehashes\fileHashes.bin">
-      <Filter>Resource Files</Filter>
+      <Filter>resources</Filter>
     </None>
     <None Include="extern\lua\src\Makefile" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="extern\lua\src\lapi.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\lauxlib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\lcode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\ldebug.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\ldo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\lfunc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\lgc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\llex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\llimits.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\lmem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\lobject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\lopcodes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\lparser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\lstate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\lstring.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\ltable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\ltm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\lua.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\luaconf.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\lualib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\lundump.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\lvm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\lua\src\lzio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\config.h">
-      <Filter>Header Files</Filter>
+      <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="src\dwm-win32.h">
-      <Filter>Header Files</Filter>
+      <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="src\win32_utf8.h">
-      <Filter>Header Files</Filter>
+      <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="src\mods\client.h">
-      <Filter>Header Files</Filter>
+      <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="src\mods\display.h">
-      <Filter>Header Files</Filter>
+      <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="src\mods\dwm.h">
-      <Filter>Header Files</Filter>
+      <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="src\mods\eventemitter.h">
-      <Filter>Header Files</Filter>
+      <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="src\mods\hotkey.h">
-      <Filter>Header Files</Filter>
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\lapi.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\lauxlib.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\lcode.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\ldebug.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\ldo.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\lfunc.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\lgc.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\llex.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\llimits.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\lmem.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\lobject.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\lopcodes.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\lparser.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\lstate.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\lstring.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\ltable.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\ltm.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\lua.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\luaconf.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\lualib.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\lundump.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\lvm.h">
+      <Filter>extern\lua\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\lua\src\lzio.h">
+      <Filter>extern\lua\inc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="extern\sdl2\src\main\windows\version.rc">
-      <Filter>Resource Files</Filter>
+      <Filter>resources</Filter>
     </ResourceCompile>
     <ResourceCompile Include="extern\sdl2\src\main\winrt\SDL2-WinRTResources.rc">
-      <Filter>Resource Files</Filter>
+      <Filter>resources</Filter>
     </ResourceCompile>
   </ItemGroup>
 </Project>
