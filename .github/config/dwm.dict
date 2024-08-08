@@ -1,6 +1,7 @@
 # Custom Dictionary Words
 adjustborder
 Allman
+alnum
 applyrules
 atpanic
 attachstack
@@ -36,7 +37,9 @@ getclienttitle
 getroot
 gettop
 ggrr
+gmock
 grabkeys
+gtest
 Iextern
 ignoreborder
 isalive
@@ -129,6 +132,7 @@ softprops
 TAGKEYS
 TAGMASK
 tagset
+TASKFILE
 termcmd
 textmargin
 textnw

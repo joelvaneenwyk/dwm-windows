@@ -1,12 +1,15 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
 # https://taskfile.dev
 
 version: '3'
 
-vars:
-  GREETING: Hello, World!
-
 tasks:
   default:
+    cmds:
+      - task: clang-tidy
+      - task: clang-format
+
+  format:
     cmds:
       - task: clang-format
 
@@ -29,6 +32,8 @@ tasks:
       - for: sources
         cmd: |
           clang-tidy "{{joinPath .TASKFILE_DIR .ITEM}}" \
-            -fix \
-            -fix-errors \
-            -checks="readability-braces-around-statements"
+            --config-file="{{joinPath .TASKFILE_DIR ".clang-tidy"}}" \
+            --use-color \
+            --fix \
+            --fix-notes \
+            --fix-errors
