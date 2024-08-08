@@ -57,16 +57,18 @@ applyrules(Client *c) {
             c->tags |= r->tags & TAGMASK ? r->tags & TAGMASK : tagset[seltags];
         }
     }
-    if (!c->tags)
+    if (!c->tags) {
         c->tags = tagset[seltags];
+    }
 }
 
 void
 arrange(void) {
     showhide(stack);
     focus(NULL);
-    if (lt[sellt]->arrange)
+    if (lt[sellt]->arrange) {
         lt[sellt]->arrange();
+    }
     restack();
 }
 
@@ -96,16 +98,17 @@ buttonpress(unsigned int button, POINTS *point) {
     if (i < LENGTH(tags)) {
         click = ClkTagBar;
         arg.ui = 1 << i;
-    }
-    else if (point->x < x + blw)
+    } else if (point->x < x + blw) {
         click = ClkLtSymbol;
-    else if (point->x > wx + ww - TEXTW(stext))
+    } else if (point->x > wx + ww - TEXTW(stext)) {
         click = ClkStatusText;
-    else
+    } else {
         click = ClkWinTitle;
+    }
 
-    if (GetKeyState(VK_SHIFT) < 0)
+    if (GetKeyState(VK_SHIFT) < 0) {
         return;
+    }
 
     for (i = 0; i < LENGTH(buttons); i++) {
         if (click == buttons[i].click && buttons[i].func && buttons[i].button == button
@@ -122,8 +125,9 @@ cleanup(lua_State *L) {
     Arg a = {.ui = ~0};
     Layout foo = { L"", NULL };
 
-    if (barhwnd)
+    if (barhwnd) {
         KillTimer(barhwnd, 1);
+    }
 
     for (i = 0; i < LENGTH(keys); i++) {
         UnregisterHotKey(dwmhwnd, i);
@@ -131,13 +135,15 @@ cleanup(lua_State *L) {
 
     DeregisterShellHookWindow(dwmhwnd);
 
-    if (wineventhook != NULL)
+    if (wineventhook != NULL) {
         UnhookWinEvent(wineventhook);
+    }
 
     view(&a);
     lt[sellt] = &foo;
-    while (stack)
+    while (stack) {
         unmanage(stack);
+    }
 
     SetSysColors(LENGTH(colorwinelements), colorwinelements, colors[0]);
 
@@ -145,13 +151,15 @@ cleanup(lua_State *L) {
 
     HWND hwnd;
     hwnd = FindWindowW(L"Shell_TrayWnd", NULL);
-    if (hwnd)
+    if (hwnd) {
         setvisibility(hwnd, TRUE);
+    }
 
-    if (font)
+    if (font) {
         DeleteObject(font);
+    }
 
-	if (L) {
+  if (L) {
 		lua_close(L);
 		L = NULL;
 	}
@@ -166,7 +174,9 @@ void
 detach(Client *c) {
     Client **tc;
 
-    for (tc = &clients; *tc && *tc != c; tc = &(*tc)->next);
+    for (tc = &clients; *tc && *tc != c; tc = &(*tc)->next) {
+        ;
+    }
     *tc = c->next;
 }
 
@@ -174,7 +184,9 @@ void
 detachstack(Client *c) {
     Client **tc;
 
-    for (tc = &stack; *tc && *tc != c; tc = &(*tc)->snext);
+    for (tc = &stack; *tc && *tc != c; tc = &(*tc)->snext) {
+        ;
+    }
     *tc = c->snext;
 }
 
@@ -196,8 +208,9 @@ drawbar(void) {
 
     for (c = clients; c; c = c->next) {
         occ |= c->tags;
-        if (c->isurgent)
+        if (c->isurgent) {
             urg |= c->tags;
+        }
     }
 
     dc.x = 0;
@@ -212,9 +225,9 @@ drawbar(void) {
         dc.w = blw;
         drawtext(lt[sellt]->symbol, dc.norm, false);
         x = dc.x + dc.w;
-    }
-    else
+    } else {
         x = dc.x;
+    }
     dc.w = TEXTW(stext);
     dc.x = ww - dc.w;
     if (dc.x < x) {
@@ -249,9 +262,9 @@ drawbar(void) {
         if (sel) {
             drawtext(getclienttitle(sel->hwnd), dc.sel, false);
             drawsquare(sel->isfixed, sel->isfloating, false, dc.sel);
-        }
-        else
+        } else {
             drawtext(NULL, dc.norm, false);
+        }
     }
 
     ReleaseDC(barhwnd, dc.hdc);
@@ -291,8 +304,9 @@ drawtext(const wchar_t *text, unsigned long col[ColLast], bool invert) {
 
     if (!font) {
         font = CreateFontW(fontsize, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, fontname);
-        if (!font)
+        if (!font) {
             font = (HFONT)GetStockObject(SYSTEM_FONT);
+        }
         }
     SelectObject(dc.hdc, font);
 
@@ -334,25 +348,32 @@ eprint(bool premortem, const wchar_t *errstr, ...) {
 
     OutputDebugStringW(buffer);
 
-    if (premortem)
+    if (premortem) {
         MessageBoxW(NULL, buffer, L"dwm-win32 has encountered an error", MB_ICONERROR | MB_SETFOREGROUND | MB_OK);
+    }
 
 cleanup:
-    if (buffer != NULL)
+    if (buffer != NULL) {
         free(buffer);
+    }
 
     va_end(ap);
 }
 
 void
 setselected(Client *c) {
-    if (!c || !ISVISIBLE(c))
-        for (c = stack; c && !ISVISIBLE(c); c = c->snext);
-    if (sel && sel != c)
+    if (!c || !ISVISIBLE(c)) {
+        for (c = stack; c && !ISVISIBLE(c); c = c->snext) {
+            ;
+        }
+    }
+    if (sel && sel != c) {
         drawborder(sel, normbordercolor);
+    }
     if (c) {
-        if (c->isurgent)
+        if (c->isurgent) {
             clearurgent(c);
+        }
         detachstack(c);
         attachstack(c);
         drawborder(c, selbordercolor);
@@ -364,29 +385,41 @@ setselected(Client *c) {
 void
 focus(Client *c) {
     setselected(c);
-    if (sel)
+    if (sel) {
         SetForegroundWindow(sel->hwnd);
+    }
 }
 
 void
 focusstack(const Arg *arg) {
     Client *c = NULL, *i;
 
-    if (!sel)
+    if (!sel) {
         return;
+    }
     if (arg->i > 0) {
-        for (c = sel->next; c && !ISFOCUSABLE(c); c = c->next);
-        if (!c)
-            for (c = clients; c && !ISFOCUSABLE(c); c = c->next);
+        for (c = sel->next; c && !ISFOCUSABLE(c); c = c->next) {
+            ;
+        }
+        if (!c) {
+            for (c = clients; c && !ISFOCUSABLE(c); c = c->next) {
+                ;
+            }
+        }
     }
     else {
-        for (i = clients; i != sel; i = i->next)
-            if (ISFOCUSABLE(i))
+        for (i = clients; i != sel; i = i->next) {
+            if (ISFOCUSABLE(i)) {
                 c = i;
-        if (!c)
-            for (; i; i = i->next)
-                if (ISFOCUSABLE(i))
+            }
+        }
+        if (!c) {
+            for (; i; i = i->next) {
+                if (ISFOCUSABLE(i)) {
                     c = i;
+                }
+            }
+        }
     }
     if (c) {
         focus(c);
@@ -430,9 +463,11 @@ Client *
 getclient(HWND hwnd) {
     Client *c;
 
-    for (c = clients; c; c = c->next)
-        if (c->hwnd == hwnd)
+    for (c = clients; c; c = c->next) {
+        if (c->hwnd == hwnd) {
             return c;
+        }
+    }
     return NULL;
 }
 
@@ -473,8 +508,9 @@ HWND
 getroot(HWND hwnd) {
     HWND parent, deskwnd = GetDesktopWindow();
 
-    while ((parent = GetWindow(hwnd, GW_OWNER)) != NULL && deskwnd != parent)
+    while ((parent = GetWindow(hwnd, GW_OWNER)) != NULL && deskwnd != parent) {
         hwnd = parent;
+    }
 
     return hwnd;
 }
@@ -492,19 +528,22 @@ iscloaked(HWND hwnd) {
     int cloaked_val;
     HRESULT h_res = DwmGetWindowAttribute(hwnd, DWMWA_CLOAKED, &cloaked_val, sizeof(cloaked_val));
 
-    if (h_res != S_OK)
+    if (h_res != S_OK) {
         cloaked_val = 0;
+    }
 
     return cloaked_val ? true : false;
 }
 
 bool
 ismanageable(HWND hwnd) {
-    if (hwnd == 0)
+    if (hwnd == 0) {
         return false;
+    }
 
-    if (getclient(hwnd))
+    if (getclient(hwnd)) {
         return true;
+    }
 
     HWND parent = GetParent(hwnd);
     int style = GetWindowLong(hwnd, GWL_STYLE);
@@ -516,8 +555,9 @@ ismanageable(HWND hwnd) {
     const wchar_t *classname = getclientclassname(hwnd);
     const wchar_t *title = getclienttitle(hwnd);
 
-    if (pok && !getclient(parent))
+    if (pok && !getclient(parent)) {
         manage(parent);
+    }
 
     debug(L"ismanageable: %s\n", getclienttitle(hwnd));
     debug(L"    hwnd: %d\n", hwnd);
@@ -543,12 +583,14 @@ ismanageable(HWND hwnd) {
         return false;
     }
 
-    if (noactiviate)
+    if (noactiviate) {
         return false;
+    }
 
     /* This is to avoid managing inactive suspended windows 10 modern apps */
-    if (iscloaked(hwnd))
+    if (iscloaked(hwnd)) {
         return false;
+    }
 
     if (wcsstr(classname, L"Windows.UI.Core.CoreWindow") && (
         wcsstr(title, L"Windows Shell Experience Host") ||
@@ -607,16 +649,18 @@ ismanageable(HWND hwnd) {
 
 void
 killclient(const Arg *arg) {
-    if (!sel)
+    if (!sel) {
         return;
+    }
     PostMessage(sel->hwnd, WM_CLOSE, 0, 0);
 }
 
 Client *manage(HWND hwnd) {
   Client *c = getclient(hwnd);
 
-  if (c)
-    return c;
+  if (c) {
+      return c;
+  }
 
   debug(L" manage %s\n", getclienttitle(hwnd));
 
@@ -624,8 +668,9 @@ Client *manage(HWND hwnd) {
       .cbSize = sizeof(WINDOWINFO),
   };
 
-  if (!GetWindowInfo(hwnd, &wi))
-    return NULL;
+  if (!GetWindowInfo(hwnd, &wi)) {
+      return NULL;
+  }
 
   if (!(c = calloc(1, sizeof(Client))))
     die(L"fatal: could not calloc() %u bytes for new client\n", sizeof(Client));
@@ -642,8 +687,9 @@ Client *manage(HWND hwnd) {
       .showCmd = SW_RESTORE,
   };
 
-  if (IsWindowVisible(hwnd) && !c->isminimized)
-    SetWindowPlacement(hwnd, &wp);
+  if (IsWindowVisible(hwnd) && !c->isminimized) {
+      SetWindowPlacement(hwnd, &wp);
+  }
 
   c->isfloating =
       (!(wi.dwStyle & WS_MINIMIZEBOX) && !(wi.dwStyle & WS_MAXIMIZEBOX));
@@ -658,8 +704,9 @@ Client *manage(HWND hwnd) {
 
   applyrules(c);
 
-  if (!c->isfloating)
-    setborder(c, false);
+  if (!c->isfloating) {
+      setborder(c, false);
+  }
 
   if (c->isfloating && IsWindowVisible(hwnd) && !c->isminimized) {
     debug(L" new floating window: x: %d y: %d w: %d h: %d\n", wi.rcWindow.left,
@@ -686,13 +733,17 @@ monocle(void) {
 
 Client *
 nextchild(Client *p, Client *c) {
-    for (; c && c->parent != p->hwnd; c = c->next);
+    for (; c && c->parent != p->hwnd; c = c->next) {
+        ;
+    }
     return c;
 }
 
 Client *
 nexttiled(Client *c) {
-    for (; c && (c->isfloating || c->isminimized || !ISVISIBLE(c)); c = c->next);
+    for (; c && (c->isfloating || c->isminimized || !ISVISIBLE(c)); c = c->next) {
+        ;
+    }
     return c;
 }
 
@@ -707,18 +758,24 @@ resize(Client *c, int x, int y, int w, int h) {
         setvisibility(c->hwnd, false);
         return;
     }
-    if (x > sx + sw)
+    if (x > sx + sw) {
         x = sw - WIDTH(c);
-    if (y > sy + sh)
+    }
+    if (y > sy + sh) {
         y = sh - HEIGHT(c);
-    if (x + w + 2 * c->bw < sx)
+    }
+    if (x + w + 2 * c->bw < sx) {
         x = sx;
-    if (y + h + 2 * c->bw < sy)
+    }
+    if (y + h + 2 * c->bw < sy) {
         y = sy;
-    if (h < bh)
+    }
+    if (h < bh) {
         h = bh;
-    if (w < bh)
+    }
+    if (w < bh) {
         w = bh;
+    }
     if (c->x != x || c->y != y || c->w != w || c->h != h) {
         c->x = x;
         c->y = y;
@@ -804,10 +861,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     case HSHELL_WINDOWDESTROYED:
                         if (c) {
                             debug(L" window %s: %s\n", c->ignore ? L"hidden" : L"destroyed", getclienttitle(c->hwnd));
-                            if (!c->ignore)
+                            if (!c->ignore) {
                                 unmanage(c);
-                            else
+                            } else {
                                 c->ignore = false;
+                            }
                         } else {
                             debug(L" unmanaged window destroyed\n");
                         }
@@ -846,8 +904,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                         }
                         break;
                 }
-            } else
-              return DefWindowProc(hwnd, msg, wParam, lParam);
+            } else {
+                return DefWindowProc(hwnd, msg, wParam, lParam);
+            }
     }
 
     return 0;
@@ -855,8 +914,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 void CALLBACK
 wineventproc(HWINEVENTHOOK heventhook, DWORD event, HWND hwnd, LONG object, LONG child, DWORD eventthread, DWORD eventtime_ms) {
-    if (object != OBJID_WINDOW || child != CHILDID_SELF || hwnd == NULL)
+    if (object != OBJID_WINDOW || child != CHILDID_SELF || hwnd == NULL) {
         return;
+    }
 
     Client *c = getclient(hwnd);
 
@@ -873,8 +933,9 @@ wineventproc(HWINEVENTHOOK heventhook, DWORD event, HWND hwnd, LONG object, LONG
         break;
 
     case EVENT_OBJECT_CLOAKED:
-        if (c)
+        if (c) {
             unmanage(c);
+        }
 
         break;
     }
@@ -882,10 +943,11 @@ wineventproc(HWINEVENTHOOK heventhook, DWORD event, HWND hwnd, LONG object, LONG
 
 BOOL CALLBACK scan(HWND hwnd, LPARAM lParam) {
   Client *c = getclient(hwnd);
-  if (c)
-    c->isalive = true;
-  else if (ismanageable(hwnd))
-    manage(hwnd);
+  if (c) {
+      c->isalive = true;
+  } else if (ismanageable(hwnd)) {
+      manage(hwnd);
+  }
 
   return TRUE;
 }
@@ -944,14 +1006,17 @@ setvisibility(HWND hwnd, bool visibility) {
 
 void
 setlayout(const Arg *arg) {
-    if (!arg || !arg->v || arg->v != lt[sellt])
+    if (!arg || !arg->v || arg->v != lt[sellt]) {
         sellt ^= 1;
-    if (arg && arg->v)
-        lt[sellt] = (Layout *)arg->v;
-    if (sel)
+    }
+    if (arg && arg->v) {
+        lt[sellt] = (Layout*)arg->v;
+    }
+    if (sel) {
         arrange();
-    else
+    } else {
         drawbar();
+    }
 }
 
 /* arg > 1.0 will set mfact absolutly */
@@ -959,11 +1024,13 @@ void
 setmfact(const Arg *arg) {
     float f;
 
-    if (!arg || !lt[sellt]->arrange)
+    if (!arg || !lt[sellt]->arrange) {
         return;
+    }
     f = arg->f < 1.0 ? arg->f + mfact : arg->f - 1.0;
-    if (f < 0.1 || f > 0.9)
+    if (f < 0.1 || f > 0.9) {
         return;
+    }
     mfact = f;
     arrange();
 }
@@ -1004,8 +1071,9 @@ static int lua_panic_handler(lua_State *L) {
 	lua_getallocf(L, &ud);
 	if (ud) {
 		const char *msg = NULL;
-		if (lua_type(L, -1) == LUA_TSTRING)
-			msg = lua_tostring(L, -1);
+    if (lua_type(L, -1) == LUA_TSTRING) {
+        msg = lua_tostring(L, -1);
+    }
         die(msg);
 	}
 	return 0;
@@ -1034,14 +1102,16 @@ setup(lua_State *L, HINSTANCE hInstance) {
     dc.sel[ColFG] = selfgcolor;
 
     /* save colors so we can restore them in cleanup */
-    for (i = 0; i < LENGTH(colorwinelements); i++)
+    for (i = 0; i < LENGTH(colorwinelements); i++) {
         colors[0][i] = GetSysColor(colorwinelements[i]);
+    }
 
     SetSysColors(LENGTH(colorwinelements), colorwinelements, colors[1]);
 
     HWND hwnd = FindWindowW(L"Shell_TrayWnd", NULL);
-    if (hwnd)
+    if (hwnd) {
         setvisibility(hwnd, showexploreronstart);
+    }
 
     WNDCLASSEXW winClass;
 
@@ -1150,8 +1220,9 @@ showclientinfo(const Arg *arg) {
 
 void
 showhide(Client *c) {
-    if (!c)
+    if (!c) {
         return;
+    }
     /* XXX: is the order of showing / hidding important? */
     if (!ISVISIBLE(c)) {
         if (IsWindowVisible(c->hwnd)) {
@@ -1181,8 +1252,9 @@ tag(const Arg *arg) {
         debug(L"window tagged: %d %s\n", sel->hwnd, getclienttitle(sel->hwnd));
         for (c = managechildwindows(sel); c; c = nextchild(sel, c->next)) {
             debug(L" child window which is %s tagged: %s\n", c->isfloating ? L"floating" : L"normal", getclienttitle(c->hwnd));
-            if (c->isfloating)
+            if (c->isfloating) {
                 c->tags = arg->ui & TAGMASK;
+            }
         }
         debug(L"window tagged finished\n");
         arrange();
@@ -1193,8 +1265,9 @@ int
 textnw(const wchar_t *text, unsigned int len) {
     SIZE size;
     GetTextExtentPoint32W(dc.hdc, text, len, &size);
-    if (size.cx > 0)
+    if (size.cx > 0) {
         size.cx += textmargin;
+    }
     return size.cx;
 }
 
@@ -1205,31 +1278,37 @@ tile(void) {
     unsigned int i, n;
     Client *c;
 
-    for (n = 0, c = nexttiled(clients); c; c = nexttiled(c->next), n++);
-    if (n == 0)
+    for (n = 0, c = nexttiled(clients); c; c = nexttiled(c->next), n++) {
+        ;
+    }
+    if (n == 0) {
         return;
+    }
 
     /* master */
     c = nexttiled(clients);
     mw = mfact * ww;
     resize(c, wx, wy, (n == 1 ? ww : mw) - 2 * c->bw, wh - 2 * c->bw);
 
-    if (--n == 0)
+    if (--n == 0) {
         return;
+    }
 
     /* tile stack */
     x = (wx + mw > c->x + c->w) ? c->x + c->w + 2 * c->bw : wx + mw;
     y = wy;
     w = (wx + mw > c->x + c->w) ? wx + ww - x : ww - mw;
     h = wh / n;
-    if (h < bh)
+    if (h < bh) {
         h = wh;
+    }
 
     for (i = 0, c = nexttiled(c->next); c; c = nexttiled(c->next), i++) {
         resize(c, x, y, w - 2 * c->bw, /* remainder */ ((i + 1 == n)
                ? wy + wh - y - 2 * c->bw : h - 2 * c->bw));
-        if (h != wh)
+        if (h != wh) {
             y = c->y + HEIGHT(c);
+        }
     }
 }
 
@@ -1243,20 +1322,23 @@ togglebar(const Arg *arg) {
 
 void
 toggleborder(const Arg *arg) {
-    if (!sel)
+    if (!sel) {
         return;
+    }
     setborder(sel, !sel->border);
 }
 
 void
 toggleexplorer(const Arg *arg) {
     HWND hwnd = FindWindowW(L"Progman", L"Program Manager");
-    if (hwnd)
+    if (hwnd) {
         setvisibility(hwnd, !IsWindowVisible(hwnd));
+    }
 
     hwnd = FindWindowW(L"Shell_TrayWnd", NULL);
-    if (hwnd)
+    if (hwnd) {
         setvisibility(hwnd, !IsWindowVisible(hwnd));
+    }
 
     updategeom();
     updatebar();
@@ -1266,12 +1348,14 @@ toggleexplorer(const Arg *arg) {
 
 void
 togglefloating(const Arg *arg) {
-    if (!sel)
+    if (!sel) {
         return;
+    }
     sel->isfloating = !sel->isfloating || sel->isfixed;
     setborder(sel, sel->isfloating);
-    if (sel->isfloating)
+    if (sel->isfloating) {
         resize(sel, sel->x, sel->y, sel->w, sel->h);
+    }
     arrange();
 }
 
@@ -1279,8 +1363,9 @@ void
 toggletag(const Arg *arg) {
     unsigned int mask;
 
-    if (!sel)
+    if (!sel) {
         return;
+    }
 
     mask = sel->tags ^ (arg->ui & TAGMASK);
     if (mask) {
@@ -1304,7 +1389,9 @@ writelog(const Arg *arg) {
     Client *c;
     FILE *fout;
     fout = fopen("dwm-win32.log", "w");
-    if (fout == NULL) return;
+    if (fout == NULL) {
+        return;
+    }
 
     fprintf(fout, "hwnd, parent, tag, visible, classname, title\n");
 
@@ -1325,14 +1412,17 @@ writelog(const Arg *arg) {
 void
 unmanage(Client *c) {
     debug(L" unmanage %s\n", getclienttitle(c->hwnd));
-    if (c->wasvisible)
+    if (c->wasvisible) {
         setvisibility(c->hwnd, true);
-    if (!c->isfloating)
+    }
+    if (!c->isfloating) {
         setborder(c, true);
+    }
     detach(c);
     detachstack(c);
-    if (sel == c)
+    if (sel == c) {
         focus(NULL);
+    }
     free(c);
     arrange();
 }
@@ -1377,11 +1467,13 @@ updategeom(void) {
 
 void
 view(const Arg *arg) {
-    if ((arg->ui & TAGMASK) == tagset[seltags])
+    if ((arg->ui & TAGMASK) == tagset[seltags]) {
         return;
+    }
     seltags ^= 1; /* toggle sel tagset */
-    if (arg->ui & TAGMASK)
+    if (arg->ui & TAGMASK) {
         tagset[seltags] = arg->ui & TAGMASK;
+    }
     arrange();
 }
 
@@ -1389,11 +1481,14 @@ void
 zoom(const Arg *arg) {
     Client *c = sel;
 
-    if (!lt[sellt]->arrange || lt[sellt]->arrange == monocle || (sel && sel->isfloating))
+    if (!lt[sellt]->arrange || lt[sellt]->arrange == monocle || (sel && sel->isfloating)) {
         return;
-    if (c == nexttiled(clients))
-        if (!c || !(c = nexttiled(c->next)))
+    }
+    if (c == nexttiled(clients)) {
+        if (!c || !(c = nexttiled(c->next))) {
             return;
+        }
+    }
     detach(c);
     attach(c);
     focus(c);
@@ -1406,28 +1501,40 @@ movestack(const Arg *arg) {
 
 	if(arg->i > 0) {
 		/* find the client after selmon->sel */
-		for(c = sel->next; c && (!ISVISIBLE(c) || c->isfloating); c = c->next);
-		if(!c)
-			for(c = clients; c && (!ISVISIBLE(c) || c->isfloating); c = c->next);
+    for (c = sel->next; c && (!ISVISIBLE(c) || c->isfloating); c = c->next) {
+        ;
+    }
+    if (!c) {
+        for (c = clients; c && (!ISVISIBLE(c) || c->isfloating); c = c->next) {
+            ;
+        }
+    }
 
-	}
+  }
 	else {
 		/* find the client before sel */
-		for(i = clients; i != sel; i = i->next)
-			if(ISVISIBLE(i) && !i->isfloating)
-				c = i;
-		if(!c)
-			for(; i; i = i->next)
-				if(ISVISIBLE(i) && !i->isfloating)
-					c = i;
-	}
+    for (i = clients; i != sel; i = i->next) {
+        if (ISVISIBLE(i) && !i->isfloating) {
+            c = i;
+        }
+    }
+    if (!c) {
+        for (; i; i = i->next) {
+            if (ISVISIBLE(i) && !i->isfloating) {
+                c = i;
+            }
+        }
+    }
+  }
 	/* find the client before sel and c */
 	for(i = clients; i && (!p || !pc); i = i->next) {
-		if(i->next == sel)
-			p = i;
-		if(i->next == c)
-			pc = i;
-	}
+      if (i->next == sel) {
+          p = i;
+      }
+      if (i->next == c) {
+          pc = i;
+      }
+  }
 
 	/* swap c and sel clients in the clients list */
 	if(c && c != sel) {
@@ -1435,17 +1542,20 @@ movestack(const Arg *arg) {
 		sel->next = c->next==sel?c:c->next;
 		c->next = temp;
 
-		if(p && p != c)
-			p->next = c;
-		if(pc && pc != sel)
-			pc->next = sel;
+    if (p && p != c) {
+        p->next = c;
+    }
+    if (pc && pc != sel) {
+        pc->next = sel;
+    }
 
-		if(sel == clients)
-			clients = c;
-		else if(c == clients)
-			clients = sel;
+    if (sel == clients) {
+        clients = c;
+    } else if (c == clients) {
+        clients = sel;
+    }
 
-		arrange();
+    arrange();
 	}
 }
 

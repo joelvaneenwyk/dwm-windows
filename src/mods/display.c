@@ -36,8 +36,10 @@ static int f_displays(lua_State *L) {
 	uint32_t index = 0;
 
 	while(EnumDisplayDevices(NULL, devicenum, &dd, 0)) {
-		if (!(dd.StateFlags && DISPLAY_DEVICE_ACTIVE)) continue;
-		DISPLAY_DEVICE newdd = {0};
+      if (!(dd.StateFlags && DISPLAY_DEVICE_ACTIVE)) {
+          continue;
+      }
+    DISPLAY_DEVICE newdd = {0};
 		newdd.cb = sizeof(DISPLAY_DEVICE);
 		DWORD monitornum = 0;
 		while(EnumDisplayDevices(dd.DeviceName, monitornum, &newdd, 0)) {
@@ -54,13 +56,15 @@ static int f_displays(lua_State *L) {
 
 static int f_display(lua_State *L) {
 	uint32_t argc = lua_gettop(L);
-	if (argc != 1)
-		return luaL_error(L, "expecting exactly 1 argument");
+  if (argc != 1) {
+      return luaL_error(L, "expecting exactly 1 argument");
+  }
 
-	if (!lua_isstring(L, 1))
-		return luaL_error(L, "expecting first argument to be of type string");
+  if (!lua_isstring(L, 1)) {
+      return luaL_error(L, "expecting first argument to be of type string");
+  }
 
-	const char *devicekey = lua_tostring(L, 1); /* first arg */
+  const char *devicekey = lua_tostring(L, 1); /* first arg */
 
 	DISPLAY_DEVICE dd;
 	dd.cb = sizeof(dd);
@@ -72,15 +76,18 @@ static int f_display(lua_State *L) {
 	BOOL found = FALSE;
 
 	while(EnumDisplayDevices(NULL, devicenum, &dd, 0)) {
-		if (!(dd.StateFlags && DISPLAY_DEVICE_ACTIVE)) continue;
-		DISPLAY_DEVICE newdd = {0};
+      if (!(dd.StateFlags && DISPLAY_DEVICE_ACTIVE)) {
+          continue;
+      }
+    DISPLAY_DEVICE newdd = {0};
 		newdd.cb = sizeof(DISPLAY_DEVICE);
 		DWORD monitornum = 0;
 		while(EnumDisplayDevices(dd.DeviceName, monitornum, &newdd, 0)) {
-			if (strcmp(newdd.DeviceKey, devicekey) != 0)
-				continue;
+        if (strcmp(newdd.DeviceKey, devicekey) != 0) {
+            continue;
+        }
 
-			lua_newtable(L);
+      lua_newtable(L);
 			found = TRUE;
 
 			lua_pushstring(L, "id");
@@ -114,8 +121,9 @@ static int f_display(lua_State *L) {
 		++devicenum;
 	}
 
-	if (!found)
-		lua_pushnil(L);
+  if (!found) {
+      lua_pushnil(L);
+  }
 
-	return 1; /* number of results */
+  return 1; /* number of results */
 }

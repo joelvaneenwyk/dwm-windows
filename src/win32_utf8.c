@@ -13,7 +13,9 @@ utf8_to_utf16 (const char *s)
 
   n = MultiByteToWideChar(CP_UTF8, 0, s, -1, NULL, 0);
   ws = malloc(n * sizeof(WCHAR));
-  if (!ws) return NULL;
+  if (!ws) {
+      return NULL;
+  }
 
   n = MultiByteToWideChar(CP_UTF8, 0, s, -1, ws, n);
   if (!n) {
@@ -34,7 +36,9 @@ utf16_to_utf8 (const WCHAR *ws)
 
   n = WideCharToMultiByte(CP_UTF8, 0, ws, -1, NULL, 0, NULL, 0);
   s = malloc(n);
-  if (!s) return NULL;
+  if (!s) {
+      return NULL;
+  }
 
   n = WideCharToMultiByte(CP_UTF8, 0, ws, -1, s, n, NULL, 0);
   if (!n) {
@@ -57,7 +61,9 @@ mbcs_to_utf16 (const char *mbcs)
 
   n = MultiByteToWideChar(codepage, 0, mbcs, -1, NULL, 0);
   ws = malloc(n * sizeof(WCHAR));
-  if (!ws) return NULL;
+  if (!ws) {
+      return NULL;
+  }
 
   n = MultiByteToWideChar(codepage, 0, mbcs, -1, ws, n);
   if (!n) {
@@ -80,7 +86,9 @@ utf16_to_mbcs (const WCHAR *ws)
 
   n = WideCharToMultiByte(codepage, 0, ws, -1, NULL, 0, NULL, 0);
   mbcs = malloc(n);
-  if (!mbcs) return NULL;
+  if (!mbcs) {
+      return NULL;
+  }
 
   n = WideCharToMultiByte(codepage, 0, ws, -1, mbcs, n, NULL, 0);
   if (!n) {
@@ -100,7 +108,9 @@ mbcs_to_utf8 (const char *mbcs)
   WCHAR *ws;
 
   ws = mbcs_to_utf16(mbcs);
-  if (!ws) return NULL;
+  if (!ws) {
+      return NULL;
+  }
 
   s = utf16_to_utf8(ws);
   free(ws);
@@ -117,7 +127,9 @@ utf8_to_mbcs (const char *s)
   WCHAR *ws;
 
   ws = utf8_to_utf16(s);
-  if (!ws) return NULL;
+  if (!ws) {
+      return NULL;
+  }
 
   mbcs = utf16_to_mbcs(ws);
   free(ws);

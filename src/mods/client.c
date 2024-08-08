@@ -117,19 +117,21 @@ static int f_client(lua_State *L) {
 
 	lua_pushstring(L, "parent");
 	HWND parent = GetParent(hwnd);
-	if (parent)
-		lua_pushnumber(L, (uint32_t)parent);
-	else
-		lua_pushnil(L);
-	lua_settable(L, -3);
+  if (parent) {
+      lua_pushnumber(L, (uint32_t)parent);
+  } else {
+      lua_pushnil(L);
+  }
+  lua_settable(L, -3);
 
 	lua_pushstring(L, "owner");
 	HWND owner = GetWindow(hwnd, GW_OWNER);
-	if (owner)
-		lua_pushnumber(L, (uint32_t)owner);
-	else
-		lua_pushnil(L);
-	lua_settable(L, -3);
+  if (owner) {
+      lua_pushnumber(L, (uint32_t)owner);
+  } else {
+      lua_pushnil(L);
+  }
+  lua_settable(L, -3);
 
 	lua_pushstring(L, "cloaked");
 	lua_pushboolean(L, iscloaked(hwnd) ? 1 : 0);
@@ -178,28 +180,32 @@ f_hide(lua_State *L) {
 int
 f_border(lua_State *L) {
 	uint32_t argc = lua_gettop(L);
-	if (argc != 2)
-		return luaL_error(L, "expecting exactly 2 arguments");
+  if (argc != 2) {
+      return luaL_error(L, "expecting exactly 2 arguments");
+  }
 
-	if (!lua_isnumber(L, 1))
-		return luaL_error(L, "expecting first argument to be of type number");
+  if (!lua_isnumber(L, 1)) {
+      return luaL_error(L, "expecting first argument to be of type number");
+  }
 
-	if (!lua_isboolean(L, 2))
-		return luaL_error(L, "expecting second argument to be of type boolean");
+  if (!lua_isboolean(L, 2)) {
+      return luaL_error(L, "expecting second argument to be of type boolean");
+  }
 
-	uint32_t id = (uint32_t)lua_tonumber(L, 1); /* first arg */
+  uint32_t id = (uint32_t)lua_tonumber(L, 1); /* first arg */
 	HWND hwnd = (HWND)id;
 
 	uint32_t border = (uint32_t)lua_toboolean(L, 2); /* second args*/
 
-	if (border > 0)
-		SetWindowLong(hwnd, GWL_STYLE, (GetWindowLong(hwnd, GWL_STYLE) | (WS_CAPTION | WS_SIZEBOX)));
-	else {
-		SetWindowLong(hwnd, GWL_STYLE, (GetWindowLong(hwnd, GWL_STYLE) & ~(WS_CAPTION | WS_SIZEBOX)) | WS_BORDER | WS_THICKFRAME);
-		SetWindowLong(hwnd, GWL_EXSTYLE, (GetWindowLong(hwnd, GWL_EXSTYLE) & ~(WS_EX_CLIENTEDGE | WS_EX_WINDOWEDGE)));
-	}
+  if (border > 0) {
+      SetWindowLong(hwnd, GWL_STYLE, (GetWindowLong(hwnd, GWL_STYLE) | (WS_CAPTION | WS_SIZEBOX)));
+  } else {
+      SetWindowLong(hwnd, GWL_STYLE,
+                    (GetWindowLong(hwnd, GWL_STYLE) & ~(WS_CAPTION | WS_SIZEBOX)) | WS_BORDER | WS_THICKFRAME);
+      SetWindowLong(hwnd, GWL_EXSTYLE, (GetWindowLong(hwnd, GWL_EXSTYLE) & ~(WS_EX_CLIENTEDGE | WS_EX_WINDOWEDGE)));
+  }
 
-	return 0;
+  return 0;
 }
 
 int
@@ -239,37 +245,44 @@ f_minimize(lua_State *L) {
 int
 f_position(lua_State *L) {
 	uint32_t argc = lua_gettop(L);
-	if (argc != 2)
-		return luaL_error(L, "expecting exactly 2 arguments");
+  if (argc != 2) {
+      return luaL_error(L, "expecting exactly 2 arguments");
+  }
 
-	if (!lua_isnumber(L, 1))
-		return luaL_error(L, "expecting first argument to be of type number");
+  if (!lua_isnumber(L, 1)) {
+      return luaL_error(L, "expecting first argument to be of type number");
+  }
 
-	if (!lua_istable(L, 2))
-		return luaL_error(L, "expecting second argument to be of type table");
+  if (!lua_istable(L, 2)) {
+      return luaL_error(L, "expecting second argument to be of type table");
+  }
 
-	uint32_t id = (uint32_t)luaL_checknumber(L, 1); /* first arg */
+  uint32_t id = (uint32_t)luaL_checknumber(L, 1); /* first arg */
 	HWND hwnd = (HWND)id;
 
 	lua_getfield(L, 2, "x");
-	if (!lua_isnumber(L, -1))
-		return luaL_error(L, "expecting x to be number");
-	uint32_t x = lua_tonumber(L, -1);
+  if (!lua_isnumber(L, -1)) {
+      return luaL_error(L, "expecting x to be number");
+  }
+  uint32_t x = lua_tonumber(L, -1);
 
 	lua_getfield(L, 2, "y");
-	if (!lua_isnumber(L, -1))
-		return luaL_error(L, "expecting y to be number");
-	uint32_t y = lua_tonumber(L, -1);
+  if (!lua_isnumber(L, -1)) {
+      return luaL_error(L, "expecting y to be number");
+  }
+  uint32_t y = lua_tonumber(L, -1);
 
 	lua_getfield(L, 2, "width");
-	if (!lua_isnumber(L, -1))
-		return luaL_error(L, "expecting width to be number");
-	uint32_t width = lua_tonumber(L, -1);
+  if (!lua_isnumber(L, -1)) {
+      return luaL_error(L, "expecting width to be number");
+  }
+  uint32_t width = lua_tonumber(L, -1);
 
 	lua_getfield(L, 2, "height");
-	if (!lua_isnumber(L, -1))
-		return luaL_error(L, "expecting height to be number");
-	uint32_t height = lua_tonumber(L, -1);
+  if (!lua_isnumber(L, -1)) {
+      return luaL_error(L, "expecting height to be number");
+  }
+  uint32_t height = lua_tonumber(L, -1);
 
 	SetWindowPos(hwnd, NULL, x, y, width, height, 0);
 
