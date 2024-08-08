@@ -51,15 +51,19 @@ jobs:
         version: 0.10.1
 
     - if: matrix.build-mode == 'manual'
-      name: Get the build metadata
-      shell: bash
-      run: |
-        echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
 
     - if: matrix.build-mode == 'manual'
-      name: Build
-      shell: cmd
-      run: build.cmd
+      name: ⚙️ Build
+      run: >
+        msbuild
+        -target:Clean,Restore,Build
+        -maxCpuCount
+        -p:RestorePackagesConfig=true
+        -p:Configuration="Release"
+        -p:Platform="x64"
+        "dwm-windows.sln"
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
