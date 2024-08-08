@@ -1,9 +1,17 @@
 {
-    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
-    "clangd.checkUpdates": true,
-    "C_Cpp.formatting": "clangFormat",
-    "cmake.useVsDeveloperEnvironment": "always",
-    "files.associations": {
-        "*clangd": "yaml"
-    }
+  "[cpp]": {
+    "editor.formatOnSave": false
+  },
+  "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+  "C_Cpp.formatting": "clangFormat",
+  "clangd.checkUpdates": true,
+  "clangd.detectExtensionConflicts": true,
+  "clangd.enableCodeCompletion": true,
+  "clangd.onConfigChanged": "restart",
+  "clangd.restartAfterCrash": true,
+  "cmake.useVsDeveloperEnvironment": "always",
+  "editor.formatOnSave": false,
+  "files.associations": {
+    "*clangd": "yaml"
+  }
 }
