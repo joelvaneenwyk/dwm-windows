@@ -1,0 +1,38 @@
+#   SPDX-FileCopyrightText: no
+#   SPDX-License-Identifier: CC0-1.0
+---
+Language: Cpp
+BasedOnStyle: LLVM
+
+AlignAfterOpenBracket: Align
+AlignEscapedNewlines: DontAlign
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: All
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakAfterReturnType: TopLevelDefinitions
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBraces: Allman
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
+ColumnLimit: 120
+Cpp11BracedListStyle: false
+FixNamespaceComments: true
+IncludeBlocks: Preserve
+IndentWidth: 4
+UseTab: Always
+MaxEmptyLinesToKeep: 2
+NamespaceIndentation: None
+PointerAlignment: Right
+ReflowComments: false
+SortIncludes: CaseInsensitive
+SpaceAfterCStyleCast: false
+SpaceInEmptyBlock: false
+SpacesBeforeTrailingComments: 2
+SpacesInAngles: Always
+SpacesInParentheses: false
+SpacesInSquareBrackets: true
+Standard: c++17
