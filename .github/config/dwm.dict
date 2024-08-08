@@ -25,6 +25,7 @@ eventemitter
 Fira
 focusstack
 forcearrange
+fullscreen
 gaplessgrid
 geoms
 getclient
@@ -43,6 +44,7 @@ iscloaked
 isfixed
 isfloating
 ISFOCUSABLE
+ismanageable
 isminimized
 Isrc
 istable
@@ -71,17 +73,20 @@ lstring
 lstrlib
 ltable
 ltablib
+luabitop
 LUAJIT
 LUALIB
 luaopen
 lundump
 lzio
+maximised
 MAXTAGLEN
 mfact
 MODKEY
 movestack
 msbuild
 MSCTFIME
+mstsc
 msvc
 MULTRET
 newlib
@@ -94,6 +99,7 @@ normbordercolor
 normfgcolor
 openf
 openlibs
+optimising
 panicf
 pcall
 premortem
@@ -101,6 +107,7 @@ pushboolean
 pushnil
 pushnumber
 pushstring
+recognises
 requiref
 selbgcolor
 selbordercolor
@@ -111,11 +118,13 @@ setmfact
 setupbar
 setvisibility
 SHCMD
+shellhookid
 showbar
 showclientinfo
 showclock
 showexploreronstart
 showutcclock
+softprops
 TAGKEYS
 TAGMASK
 tagset
