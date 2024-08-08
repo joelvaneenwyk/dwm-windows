@@ -35,6 +35,21 @@
 ///
 #include <compat-5.3.h>
 
+typedef struct lua_State lua_State;
+typedef int (*lua_CFunction)(lua_State *L);
+
+extern void lua_close(lua_State *L);
+extern lua_CFunction lua_atpanic(lua_State *L, lua_CFunction panicf);
+extern void luaL_openlibs(lua_State *L);
+extern int luaopen_bit(lua_State *L);
+
+extern void luaL_requiref(lua_State *L, const char *modname,
+                          lua_CFunction openf, int glb);
+
+extern lua_State *luaL_newstate(void);
+#define luaL_dostring(L, s)                                                    \
+  (luaL_loadstring(L, s) || lua_pcall(L, 0, LUA_MULTRET, 0))
+
 #include <dwmapi.h>
 #include <shellapi.h>
 #include <stdbool.h>
@@ -221,9 +236,5 @@ extern int wx, wy, ww, wh;
 
 /* factor of master area size [0.05..0.95] */
 extern float mfact;
-
-typedef struct lua_State lua_State;
-extern void luaL_openlibs(lua_State *L);
-extern int luaopen_bit(lua_State *L);
 
 #endif /* DWM_WIN32_H__ */
