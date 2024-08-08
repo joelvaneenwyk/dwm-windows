@@ -206,18 +206,12 @@ extern void zoom(const Arg* arg);
 extern bool iscloaked(HWND hwnd);
 
 /* overrides */
-void
-bstack(void);
-void
-gaplessgrid(void);
-void
-grid(void);
-void
-fibonacci(void);
-void
-spiral(void);
-void
-dwindle(void);
+void bstack(void);
+void gaplessgrid(void);
+void grid(void);
+void fibonacci(int s);
+void spiral(void);
+void dwindle(void);
 
 extern Client* clients;
 /* bar geometry x, y, height and layout symbol width */
