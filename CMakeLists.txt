@@ -3,18 +3,14 @@ project(dwm_windows)
 
 enable_language(C)
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_C_STANDARD 99)
 
-include_directories(extern/lua/etc)
+include_directories(src)
 include_directories(extern/lua/src)
 include_directories(extern/lua-compat-5.3)
-include_directories(extern/luajit/dynasm)
-include_directories(extern/luajit/src)
-include_directories(extern/luajit/src/host)
 include_directories(extern/sdl2/include)
 include_directories(extern/sdl2/src)
-include_directories(extern/sdl2/test)
 include_directories(extern/sdl2/Xcode-iOS/Demos/src)
-include_directories(src)
 
 set(SOURCE_FILES
         extern/luabitop/bit.c
