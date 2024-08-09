@@ -55,7 +55,7 @@ static Rule rules[] = {
 };
 
 /* layout(s) */
-float mfact = 0.55; /* factor of master area size [0.05..0.95] */
+float mfact = 0.55f; /* factor of master area size [0.05..0.95] */
 
 static Layout layouts[] = {
     /* symbol     arrange function */
@@ -95,8 +95,8 @@ static Key keys[] = {
     {MODKEY | MOD_SHIFT, 'J', movestack, {.i = +1}},
     {MODKEY | MOD_SHIFT, 'K', movestack, {.i = -1}},
     {MODKEY | MOD_SHIFT, 'A', forcearrange, {.i = -1}},
-    {MODKEY, 'H', setmfact, {.f = -0.05}},
-    {MODKEY, 'L', setmfact, {.f = +0.05}},
+    {MODKEY, 'H', setmfact, {.f = -0.05f}},
+    {MODKEY, 'L', setmfact, {.f = +0.05f}},
     {MODKEY, 'I', showclientinfo, {0}},
     {MODKEY | MOD_CONTROL, VK_RETURN, zoom, {0}},
     {MODKEY, VK_TAB, view, {0}},

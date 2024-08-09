@@ -666,8 +666,9 @@ manage(HWND hwnd) {
         return NULL;
     }
 
-    if (!(c = calloc(1, sizeof(Client))))
+    if (!(c = calloc(1, sizeof(Client)))) {
         die(L"fatal: could not calloc() %u bytes for new client\n", sizeof(Client));
+    }
 
     c->hwnd = hwnd;
     c->parent = GetParent(hwnd);
@@ -1068,7 +1069,7 @@ lua_panic_handler(lua_State* L) {
         if (lua_type(L, -1) == LUA_TSTRING) {
             msg = lua_tostring(L, -1);
         }
-        die(msg);
+        die(L"fatal: panic handler: %s", msg);
     }
     return 0;
 }
@@ -1142,8 +1143,9 @@ setup(lua_State* L, HINSTANCE hInstance) {
 
     arrange();
 
-    if (!RegisterShellHookWindow(dwmhwnd))
+    if (!RegisterShellHookWindow(dwmhwnd)) {
         die(L"Could not RegisterShellHookWindow");
+    }
 
     /* Grab a dynamic id for the SHELLHOOK message to be used later */
     shellhookid = RegisterWindowMessageW(L"SHELLHOOK");
@@ -1151,8 +1153,9 @@ setup(lua_State* L, HINSTANCE hInstance) {
     wineventhook =
         SetWinEventHook(EVENT_OBJECT_CLOAKED, EVENT_OBJECT_UNCLOAKED, NULL, wineventproc, 0, 0, WINEVENT_OUTOFCONTEXT);
 
-    if (!wineventhook)
+    if (!wineventhook) {
         die(L"Could not SetWinEventHook");
+    }
 
     updatebar();
 
@@ -1178,8 +1181,9 @@ setupbar(HINSTANCE hInstance) {
     winClass.lpszMenuName = NULL;
     winClass.lpszClassName = L"dwm-bar";
 
-    if (!RegisterClassW(&winClass))
+    if (!RegisterClassW(&winClass)) {
         die(L"Error registering window class");
+    }
 
     barhwnd = CreateWindowExW(WS_EX_TOOLWINDOW, L"dwm-bar", NULL,                             /* window title */
                               WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, 0, 0, 0, 0, NULL, /* parent window */
@@ -1390,8 +1394,8 @@ writelog(const Arg* arg) {
     fprintf(fout, "hwnd, parent, tag, visible, classname, title\n");
 
     for (c = clients; c; c = c->next) {
-        fprintf(fout, "%d,", c->hwnd);
-        fprintf(fout, "%d,", c->parent == NULL ? 0 : c->parent);
+        fprintf(fout, "%p,", (void*)c->hwnd);
+        fprintf(fout, "%p,", c->parent == NULL ? (void*)(size_t)0 : (void*)c->parent);
         fprintf(fout, "%d,", c->tags);
         fprintf(fout, "%d,", IsWindowVisible(c->hwnd));
         fwprintf(fout, getclientclassname(c->hwnd));

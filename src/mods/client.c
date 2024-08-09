@@ -66,7 +66,7 @@ EnumWindowsCallback(HWND hwnd, LPARAM lParam) {
 
     state->index += 1;
     lua_pushnumber(state->L, state->index);
-    lua_pushnumber(state->L, (uint32_t)hwnd);
+    lua_pushnumber(state->L, (uint32_t)(size_t)hwnd);
     lua_settable(state->L, -3);
 
     return TRUE;
@@ -75,7 +75,7 @@ EnumWindowsCallback(HWND hwnd, LPARAM lParam) {
 static int
 f_client(lua_State* L) {
     uint32_t id = (uint32_t)luaL_checknumber(L, 1); /* first arg */
-    HWND hwnd = (HWND)id;
+    HWND hwnd = (HWND)(size_t)id;
 
     if (!IsWindow(hwnd)) {
         lua_pushnil(L);
@@ -111,7 +111,7 @@ f_client(lua_State* L) {
     lua_pushstring(L, "parent");
     HWND parent = GetParent(hwnd);
     if (parent) {
-        lua_pushnumber(L, (uint32_t)parent);
+        lua_pushnumber(L, (uint32_t)(size_t)parent);
     } else {
         lua_pushnil(L);
     }
@@ -120,7 +120,7 @@ f_client(lua_State* L) {
     lua_pushstring(L, "owner");
     HWND owner = GetWindow(hwnd, GW_OWNER);
     if (owner) {
-        lua_pushnumber(L, (uint32_t)owner);
+        lua_pushnumber(L, (uint32_t)(size_t)owner);
     } else {
         lua_pushnil(L);
     }
@@ -153,7 +153,7 @@ f_client(lua_State* L) {
 int
 f_show(lua_State* L) {
     uint32_t id = (uint32_t)luaL_checknumber(L, 1); /* first arg */
-    HWND hwnd = (HWND)id;
+    HWND hwnd = (HWND)(size_t)id;
 
     ShowWindow(hwnd, SW_SHOW);
 
@@ -163,7 +163,7 @@ f_show(lua_State* L) {
 int
 f_hide(lua_State* L) {
     uint32_t id = (uint32_t)luaL_checknumber(L, 1); /* first arg */
-    HWND hwnd = (HWND)id;
+    HWND hwnd = (HWND)(size_t)id;
 
     ShowWindow(hwnd, SW_HIDE);
 
@@ -186,7 +186,7 @@ f_border(lua_State* L) {
     }
 
     uint32_t id = (uint32_t)lua_tonumber(L, 1); /* first arg */
-    HWND hwnd = (HWND)id;
+    HWND hwnd = (HWND)(size_t)id;
 
     uint32_t border = (uint32_t)lua_toboolean(L, 2); /* second args*/
 
@@ -204,7 +204,7 @@ f_border(lua_State* L) {
 int
 f_close(lua_State* L) {
     uint32_t id = (uint32_t)luaL_checknumber(L, 1); /* first arg */
-    HWND hwnd = (HWND)id;
+    HWND hwnd = (HWND)(size_t)id;
 
     SendMessageA(hwnd, WM_CLOSE, 0, 0);
 
@@ -214,7 +214,7 @@ f_close(lua_State* L) {
 int
 f_focus(lua_State* L) {
     uint32_t id = (uint32_t)luaL_checknumber(L, 1); /* first arg */
-    HWND hwnd = (HWND)id;
+    HWND hwnd = (HWND)(size_t)id;
     SetForegroundWindow(hwnd);
     return 0;
 }
@@ -222,7 +222,7 @@ f_focus(lua_State* L) {
 int
 f_maximize(lua_State* L) {
     uint32_t id = (uint32_t)luaL_checknumber(L, 1); /* first arg */
-    HWND hwnd = (HWND)id;
+    HWND hwnd = (HWND)(size_t)id;
     SendMessageA(hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
     return 0;
 }
@@ -230,7 +230,7 @@ f_maximize(lua_State* L) {
 int
 f_minimize(lua_State* L) {
     uint32_t id = (uint32_t)luaL_checknumber(L, 1); /* first arg */
-    HWND hwnd = (HWND)id;
+    HWND hwnd = (HWND)(size_t)id;
     SendMessageA(hwnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
     return 0;
 }
@@ -251,7 +251,7 @@ f_position(lua_State* L) {
     }
 
     uint32_t id = (uint32_t)luaL_checknumber(L, 1); /* first arg */
-    HWND hwnd = (HWND)id;
+    HWND hwnd = (HWND)(size_t)id;
 
     lua_getfield(L, 2, "x");
     if (!lua_isnumber(L, -1)) {
