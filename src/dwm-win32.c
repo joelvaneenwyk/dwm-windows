@@ -133,7 +133,7 @@ cleanup(lua_State* L) {
         KillTimer(barhwnd, 1);
     }
 
-    for (i = 0; i < LENGTH(keys); i++) {
+    for (i = 0; i < (int)LENGTH(keys); i++) {
         UnregisterHotKey(dwmhwnd, i);
     }
 
@@ -520,7 +520,7 @@ getroot(HWND hwnd) {
 void
 grabkeys(HWND hwnd) {
     int i;
-    for (i = 0; i < LENGTH(keys); i++) {
+    for (i = 0; i < (int)LENGTH(keys); i++) {
         RegisterHotKey(hwnd, i, keys[i].mod, keys[i].key);
     }
 }
